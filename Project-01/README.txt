@@ -1,8 +1,8 @@
-#######################################################################################################################
-##  Name:   Rajendra Kumar Raghupatruni                                                                              ##
-##  ID:     109785402                                                                                                ##
-##  Net-ID: rraghupatrun                                                                                             ##
-#######################################################################################################################
+#################################################################################################################
+##  Name:   Rajendra Kumar Raghupatruni                                                                        ##
+##  ID:     109785402                                                                                          ##
+##  Net-ID: rraghupatrun                                                                                       ##
+#################################################################################################################
 
 Project 1: Peg Solitaire
 ---------------------------
@@ -16,7 +16,8 @@ Objective: To remove all the pegs except one from the board. This peg should be 
 
 Additional Constraints:
 *************************
-    - In IDFS - if the levels reached the number of pegs on the board and still the goal is not found the program exits
+    - In IDFS - if the levels reached the number of pegs on the board and still the goal is not found the
+      program exits
     - If the 'configuration.txt' file not found in the current directory, the program exits
     - If valid input/choice for the Algorithm to run is not given, the program exits
     - Already visited nodes are not revisited in all the three algorithms
@@ -32,8 +33,8 @@ Files:
     - Heuristics.py
         * This file contains the Heuristic definitions and their computations for A* algorithm
     - ReadInput.py
-        * This file is responsible to read the 'configuration.txt' file and generate the initial/start state of the
-          game.
+        * This file is responsible to read the 'configuration.txt' file and generate the initial/start state
+          of the game.
     - configuration.txt
         * This is the initial configuration of the game.
 
@@ -147,7 +148,7 @@ a) A* Heuristic 1:
   - - 0 0 0 - -
 !===============!
 
-----------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
 
 b) A* Heuristic 2:
 -------------------
@@ -259,4 +260,4 @@ b) A* Heuristic 2:
 
 Note: Due to space constraints, the expanded list section has only the A* heuristic 1 and 2  algorithm outputs.
 
-#####################################################-> END <-##########################################################
+#################################################-> END <-########################################################
