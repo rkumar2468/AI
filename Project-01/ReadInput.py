@@ -15,7 +15,7 @@ class readInput:
             # print line
             local = []
             for ch in line:
-                if ch != '\n':
+                if ch != '\n' and ch != '\r':
                     local.append(ch)
             self.list.append(local)
         fid.close()
