@@ -17,6 +17,11 @@ class CSP:
         self.courseTACount = {}
 
     def timeToNum(self, str):
+        """
+        This function computes the time in the format HH:MI AM/PM to an integer
+        :param : str- Time
+        :return: integer value of the Time
+        """
         ret = 0
         list = str.split(':')
         ampm = list.pop(-1).split(' ')
@@ -28,11 +33,10 @@ class CSP:
 
     def timeRangeCheck(self, taTime, reciteTime):
         """
-        This function checks whether there is any overlap in 90 mins of either times.
-        Returns True if they doesnt overlap else Returns False.
-
-        :param taTime:
-        :param reciteTime:
+        This function checks if there is any overlap between the course timings and the TA non-availability timings.
+        Returns True if there is no overlap else returns False.
+        :param : taTime
+        :param : reciteTime
         :return: True/False
         """
         if taTime == reciteTime: return False
@@ -43,6 +47,13 @@ class CSP:
         return True
 
     def recitationConstraintCheck(self, ta, course, inp):
+        """
+        This function checks if the TA is free during the course recitation time
+        :param : TA
+        :param : Course
+        :param : inp: object of Read_Input.readInputFile
+        :return: True/ False
+        """
         recitations = inp.getCourseRecitations()[course]
         responsibilities = inp.getTAResponsibilities()[ta]
         if recitations[0] != responsibilities[0]:
@@ -54,10 +65,10 @@ class CSP:
 
     def skillTest(self, ta, course, inp):
         """
-        This function identifies whether the TA matches all the course requirements.
-        :param ta:
-        :param course:
-        :param inp:
+        This function identifies whether the TA possesses all the skills required by the course
+        :param : TA name
+        :param : Course
+        :param : inp - object of Read_Input.readInputFile
         :return: True/False
         """
         taSkill = inp.getTASkills()
@@ -70,7 +81,9 @@ class CSP:
 
     def isTARequired(self, course, inp):
         """
-        Does the TA needs to attend the class
+        This function estimates if a course requires a TA to attend it.
+        :param : Course
+        :param: inp - object of Read_Input.readInputFile
         :return: True/False
         """
         cDet = inp.getCourseDetails()
@@ -81,9 +94,9 @@ class CSP:
 
     def computeTACntForClass(self, inp):
         """
-        This function is responsible for computing how many TAs needed for each course.
-        :param inp: Read_Input.readInputFile
-        :return: void
+        This function computes the number of TAs required for each course.
+        :param : inp - object of Read_Input.readInputFile
+        :return : void
         """
         cDet = inp.getCourseDetails()
         for key in cDet.keys():
@@ -98,7 +111,7 @@ class CSP:
 
     def updateValues(self, filename):
         """
-        Generates all the basic data structures based on the input file.
+        This function generates all the data structures by parsing the input file.
         :return: readInputFile object
         """
         inp = Read_Input.readInputFile(filename)
