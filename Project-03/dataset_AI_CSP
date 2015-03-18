@@ -1,7 +1,6 @@
 1. Time each course is taking place: Course name followed by list of days and times. Example: 
 
 CSE101, Tue, 11:30, Th, 10:00
-CSE101, Mon, 2:30 PM, Wed, 2:30 PM
 CSE102, Tue, 2:30 PM, Th, 2:30 PM
 CSE110, Mon, 1:00 PM, Fri, 1:00 PM
 CSE114, Mon, 8:00 AM, Wed, 8:00 AM, Fri, 8:00 AM
@@ -75,7 +74,6 @@ CSE506, Wed, 8:30 AM
 3. Course details: Course name followed by number of students enrolled and Boolean value indicating if TA has to attend lectures. Example:
 
 CSE101, 44, yes
-CSE101, 115, yes
 CSE102, 53, yes
 CSE110, 391, no
 CSE114, 177, yes 
@@ -126,7 +124,6 @@ CSE549, 63, yes
 4. Course requirements: skills required from a TA of the course: course name followed by a list of skills. Example:
 
 CSE101, Java, C#, Awesome Hacking Skills
-CSE101, Java, C#, Awesome Hacking Skills, Security, Networking,
 CSE102, C, Python, C#, Networking, Data structures
 CSE110, C, C++, Java, JavaScript, JSP, Python, C#,
 CSE114, C, Java, JavaScript, JSP, Python, C#, Hacking Skills, Security, Networking
