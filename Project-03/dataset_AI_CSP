@@ -228,53 +228,53 @@ TA50, Tue, 11:30 AM
 
 6. TA skills: skills possessed by each TA: name followed by list of skills. Example:
 
-TA1, C, C++, Java, JavaScript
-TA2, Java, JavaScript, JSP, Python
-TA3, C++, Java, JavaScript, JSP
-TA4, C, C++, Python
-TA5, Java, JavaScript, JSP, Python
-TA6, C, C++, Java, JavaScript, JSP, Python
-TA7, C, C++, Java, JavaScript, JSP, Python
-TA8, C, C++, Java, JavaScript, JSP, Python
-TA9, JSP, Python
-TA10, C, JSP, Python
-TA11, C, C++, Java, JavaScript, JSP, Python
-TA12, C, JavaScript, JSP, Python
-TA13, C, Java, JavaScript, JSP, Python
-TA14, C, JavaScript, JSP, Python
-TA15, Java, JavaScript, JSP, Python
-TA16, C, Java, JavaScript, JSP
-TA17, C, C++, Java, JavaScript, JSP, Python
-TA18, C, C++, Java
-TA19, C, Java, JavaScript,
-TA20, JSP, Python
-TA21, C, Python
-TA22, C, C++
-TA23, C, C++, Java, JavaScript, JSP, Python
-TA24, C, C++
-TA25, C, C++, Java, JavaScript, JSP, Python
-TA26, C, C++
-TA27, C, C++, Java, JavaScript, JSP
-TA28, C, Python
-TA29, C, C++, Java
-TA30, C, C++, Java, JavaScript
-TA31, C, C++, Java, JavaScript, JSP, Python
-TA32, C, C++, Java, JavaScript, JSP, Python
-TA33, C, C++, Java, JavaScript, JSP, Python
-TA34, C, C++, Java, JavaScript, JSP, Python
-TA35, C, C++, Java, JavaScript, JSP, Python
-TA36, JSP, Python
-TA37, C, JavaScript, JSP, Python
-TA38, C, Python
-TA39, C, Java, JavaScript, JSP, Python
-TA40, C, JSP, Python
-TA41, Java, JavaScript, JSP, Python
-TA42, JSP, Python
-TA43, C++, Java
-TA44, Java, JavaScript, JSP, Python
-TA45, JSP, Python
-TA46, C, JSP, Python
-TA47, C, C++, Java, JavaScript, JSP, Python
-TA48, C, C++, Java, JavaScript, JSP, Python
-TA49, C, C++, Java, JavaScript, JSP, Python
-TA50, C, C++, Java, JavaScript, JSP, Python
+TA1, C, C++, Java, JavaScript, Awesome Hacking Skills
+TA2, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA3, C++, Java, JavaScript, JSP, Awesome Hacking Skills
+TA4, C, C++, Python, Awesome Hacking Skills
+TA5, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA6, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA7, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA8, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA9, JSP, Python, Awesome Hacking Skills
+TA10, C, JSP, Python, Awesome Hacking Skills
+TA11, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA12, C, JavaScript, JSP, Python, Awesome Hacking Skills
+TA13, C, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA14, C, JavaScript, JSP, Python, Awesome Hacking Skills
+TA15, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA16, C, Java, JavaScript, JSP, Awesome Hacking Skills
+TA17, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA18, C, C++, Java, Awesome Hacking Skills
+TA19, C, Java, JavaScript, Awesome Hacking Skills
+TA20, JSP, Python, Awesome Hacking Skills
+TA21, C, Python, Awesome Hacking Skills
+TA22, C, C++, Awesome Hacking Skills
+TA23, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA24, C, C++, Awesome Hacking Skills
+TA25, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA26, C, C++, Awesome Hacking Skills
+TA27, C, C++, Java, JavaScript, JSP, Awesome Hacking Skills
+TA28, C, Python, Awesome Hacking Skills
+TA29, C, C++, Java, Awesome Hacking Skills
+TA30, C, C++, Java, JavaScript, Awesome Hacking Skills
+TA31, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA32, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA33, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA34, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA35, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA36, JSP, Python, Awesome Hacking Skills
+TA37, C, JavaScript, JSP, Python, Awesome Hacking Skills
+TA38, C, Python, Awesome Hacking Skills
+TA39, C, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA40, C, JSP, Python, Awesome Hacking Skills
+TA41, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA42, JSP, Python, Awesome Hacking Skills
+TA43, C++, Java, Awesome Hacking Skills
+TA44, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA45, JSP, Python, Awesome Hacking Skills
+TA46, C, JSP, Python, Awesome Hacking Skills
+TA47, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA48, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA49, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills
+TA50, C, C++, Java, JavaScript, JSP, Python, Awesome Hacking Skills

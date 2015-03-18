@@ -90,6 +90,7 @@ class CSP:
             return True
         classReciteTime = self.timeToNum(recitations[1])
         taClassTime = self.timeToNum(responsibilities[1])
+        print "Recitation check for [", ta, course, "]"
         return self.timeRangeCheck(classReciteTime, taClassTime, self.classTime, self.recitationTime)
 
     def skillTest(self, ta, course):
@@ -107,15 +108,16 @@ class CSP:
         # Not sure if this is really needed ?? #
 
         if ta not in taSkill.keys() or len(taSkill[ta]) == 0: return False
+        if course not in courseReq.keys(): return True
 
         # Assumption : If the course doesnt have any requirements, then any TA can be allotted. #
         lenCourse = len(courseReq[course])
-        if lenCourse == 0: return True
+        # if lenCourse == 0: return True
         # print taSkill[ta]
         list = [x for x in courseReq[course] if x not in taSkill[ta]]
         # print courseReq[course]
-        percent = float( len(list) / lenCourse )
-        if len(list) != 0 and percent >= 0.5:
+        percent = float(len(list))/float(lenCourse)
+        if len(list) != 0 and percent > 0.8:
             print "Skill Test failed for ta: %s Course: %s" %(ta, course)
             return False
         print "\nSkill matches for ta: %s Course: %s\n" %(ta, course)
@@ -129,13 +131,15 @@ class CSP:
         """
         cDet = self.inp.getCourseDetails()
         for key in cDet.keys():
-            stud = cDet[key][0].strip(' ')
+            stud = int(cDet[key][0].strip(' '))
             if stud >= 25 and stud < 40:
                 self.courseTACount[key] = 0.5
             elif stud >= 40 and stud < 60:
                 self.courseTACount[key] = 1.5
             elif stud >= 60:
                 self.courseTACount[key] = 2
+            else :
+                self.courseTACount[key] = 0
         # print self.courseTACount
 
     def updateValues(self, filename, recitationTime=90, classTime=90):
@@ -159,8 +163,12 @@ class CSP:
     # def getUnassignedTa(self):
     #     for ta in
     def addToAssignment(self, ta, assignment):
+        print "Adding assignment [", ta, assignment, "]"
         if self.assignee[assignment] <= 1:
-            self.assignment[ta].append([assignment, self.assignee[assignment]])
+            if ta in self.assignment.keys():
+                self.assignment[ta].append([assignment, self.assignee[assignment]])
+            else:
+                self.assignment[ta] = [assignment, self.assignee[assignment]]
             self.variables[ta] -= self.assignee[assignment]
         else:
             # print self.assignment[ta]
@@ -168,6 +176,7 @@ class CSP:
             self.variables[ta] -= 1
 
     def removeFromAssignment(self, ta, assignment):
+        print "Removing assignment [", ta, assignment, "]"
         if self.assignee[assignment] <= 1:
             list = self.assignment[ta]
             list.pop()
@@ -188,22 +197,23 @@ class CSP:
             # return self.assignment
         tas = copy.deepcopy(var)
         values = copy.deepcopy(assign)
-        ta = tas.popitem()
+        while len(tas) != 0:
+            ta = tas.popitem()
 
-        for val in values.keys():
-            if self.constraintCheck(ta[0], val):
-                values.pop(val)
-                self.addToAssignment(ta[0], val)
-                result = self.backtracking_search(tas, values)
-                if result == True:
-                    print "Assignment Succeeded.!"
+            for val in values.keys():
+                if self.variables[ta[0]] == 0:
                     return True
-                self.removeFromAssignment(ta[0], val)
+                if self.constraintCheck(ta[0], val):
+                    values.pop(val)
+                    self.addToAssignment(ta[0], val)
+                    result = self.backtracking_search(tas, values)
+                    if result == True:
+                        print "Assignment Succeeded.!"
+                        return True
+                    self.removeFromAssignment(ta[0], val)
 
         return False
-            # val = values.pop()
-        # for ta in tas
-        # if self.constraintCheck()
+
 
     def checkIfTAIsFree(self, ta, course):
         # self.inp.printCourseTime()
@@ -236,32 +246,26 @@ class CSP:
         return True
 
     def constraintCheck(self, ta, course):
-
-        # print "1"
         # Check if TA has all the required skills #
         if not self.skillTest(ta, course): return False
-        # print "2"
+
         # Check if TA Class timings doesnt class with Course Recitations #
         if not self.recitationConstraintCheck(ta, course): return False
-        # print "3"
+
         # Check if TA has to attend the class, if yes TA has to be free during the class timings #
         if self.isTARequiredToAttendClass(course):
             return self.checkIfTAIsFree(ta, course)
 
-
 if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
-    obj.updateValues('dataset_AI_CSP')
-    obj.computeTACntForClass()
+    obj.updateValues('testInput')
+    # obj.computeTACntForClass()
     # print "Does TA1 has all the skills for RAJ? ", obj.skillTest('TA1','RAJ',inp)
     # print "Dude:", obj.isTARequiredToAttendClass('CSE101')
-    print obj.constraintCheck('TA3', 'CSE101')
+    # print obj.constraintCheck('TA3', 'CSE101')
     print obj.backtracking_search(obj.variables, obj.assignee)
     print "Variables : ", obj.variables
     print
     print "Assignees: ", obj.assignee
     print "Assignment: ", obj.assignment
-    # print " TAs Count: ", len(obj.variables)
-    # print
-    # print obj.timeToNum('2:30 PM')
