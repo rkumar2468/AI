@@ -164,6 +164,9 @@ class CSP:
     #     for ta in
     def addToAssignment(self, ta, assignment):
         print "Adding assignment [", ta, assignment, "]"
+        if self.variables[ta] == 0:
+            return
+
         if self.assignee[assignment] <= 1:
             if ta in self.assignment.keys():
                 self.assignment[ta].append([assignment, self.assignee[assignment]])
