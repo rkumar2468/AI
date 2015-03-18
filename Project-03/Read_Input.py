@@ -1,3 +1,5 @@
+import os, sys
+
 class readInputFile:
 
     def __init__(self,filename):
@@ -9,8 +11,10 @@ class readInputFile:
         self.taResp={}
         self.taSkills={}
 
-
     def generateListsFromInputFile(self):
+        if not os.path.exists(self.file):
+            print "Error: File \'%s\' doesnot exists.!" %(self.file)
+            sys.exit(-1)
         f=open(self.file,'r')
         count=0
         for line in f:
@@ -22,7 +26,7 @@ class readInputFile:
                 continue
             str=line.strip('\n')
             stringArr=str.split(',')
-            values=stringArr[1:]
+            values=[x.lstrip(' ') for x in stringArr[1:]]
             list=self.getFunction(count)
             list.update({stringArr[0]:values})
 
@@ -60,51 +64,3 @@ class readInputFile:
 
     def printCourseTime(self):
         print self.courseTime
-
-# if __name__ =='__main__':
-#
-#     # filename=raw_input()
-#     # print "filename:",filename
-#     filename = 'dataset_AI_CSP'
-#     f=readInputFile(filename)
-#     f.generateFromInputFile()
-#
-#     log=open("logfile.txt","w")
-#
-#     print "Course timings:"
-#     print f.getCourseTime()
-#
-#     print "Course Recitations:"
-#     print f.getCourseRecite()
-#
-#     print "Course Requirements:"
-#     print f.getCourseReq()
-#
-#     print "Course Details:"
-#     print f.getCourseDet()
-#
-#     print "TA Skills:"
-#     print f.getTASkills()
-#
-#     print "TA Responsibilities:"
-#     print f.getTAResp()
-#
-#     """
-#     print >> log, "Course timings:"
-#     print >> log, f.getCourseTime()
-#
-#     print >> log, "Course Recitations:"
-#     print >> log, f.getCourseRecite()
-#
-#     print >> log,"Course Requirements:"
-#     print >> log,f.getCourseReq()
-#
-#     print >> log, "Course Details:"
-#     print >> log, f.getCourseDet()
-#
-#     print >> log, "TA Skills:"
-#     print >> log, f.getTASkills()
-#
-#     print >> log, "TA Responsibilities:"
-#     print >> log, f.getTAResp()
-#     """
