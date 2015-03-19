@@ -1,4 +1,4 @@
-import re, copy, sys
+import copy, sys
 import Read_Input
 
 class CSP:
@@ -293,11 +293,11 @@ class CSP:
 if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
-    obj.updateValues('dataset_AI_CSP')
-    # obj.updateValues('testInput')
+    # obj.updateValues('dataset_AI_CSP')
+    obj.updateValues('testInput')
     ret = obj.backtracking_search(obj.variables, obj.assignee)
     if ret == False:
-        print "Complete Assignment failed. Only partial assignment done.!\n"
+        print "Complete Assignment failed. \n   Only partial assignment done.!\n"
     print "Variables : ", obj.variables
     print
     print "Assignees: ", obj.assignee, "\n"
