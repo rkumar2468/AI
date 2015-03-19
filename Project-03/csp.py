@@ -293,16 +293,17 @@ class CSP:
 if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
-    # obj.updateValues('dataset_AI_CSP')
-    obj.updateValues('testInput')
+    obj.updateValues('dataset_AI_CSP')
+    # obj.updateValues('testInput')
     ret = obj.backtracking_search(obj.variables, obj.assignee)
     if ret == False:
         print "Complete Assignment failed. Only partial assignment done.!\n"
     print "Variables : ", obj.variables
     print
     print "Assignees: ", obj.assignee, "\n"
-    print obj.assignment
-    # f=open('test.txt','w')
-    # f.write(obj.assignment)
-    # f.close()
+    # print obj.assignment
+    f=open('test.txt','w')
+    for keys in obj.assignment.keys():
+        print >> f, "Key - ", keys, " Val: ", obj.assignment[keys], "\n"
+    f.close()
     # print obj.courseTACount
