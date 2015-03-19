@@ -19,11 +19,22 @@ class CSP:
         self.assignee = {}
         self.courseTACount = {}
 
+    def isCourseAssignmentComplete(self):
+        assignment = self.assignee.values()
+        return ([0]*len(assignment) == assignment)
+
     def isAssignmentComplete(self):
+
+        # To check if the all the courses have a TA assigned #
+        if self.isCourseAssignmentComplete():
+            return True
+
         varLen = len(self.variables.keys())
         assignLen = len(self.assignment.keys())
         if varLen == 0 or assignLen == 0:
             return False
+        ## Pending: Need to call a function which checks if all the TAs are 100% assigned ##
+
         return (varLen == assignLen)
 
     def timeToNum(self, str):
@@ -160,26 +171,32 @@ class CSP:
             self.assignee[course] = self.courseTACount[course]
         # return inp
 
-    # def getUnassignedTa(self):
-    #     for ta in
     def addToAssignment(self, ta, assignment):
-        print "Adding assignment [", ta, assignment, "]"
+        # print "Adding assignment [", ta, assignment, "]"
         if self.variables[ta] == 0:
-            return
+            return 0
 
         if self.assignee[assignment] <= 1:
             if ta in self.assignment.keys():
+                # Need to change it for proper formatting - Done #
+                # There are potential issues with this assignment #
+                # self.assignee should be updated or else will have issues #
                 self.assignment[ta].append([assignment, self.assignee[assignment]])
             else:
-                self.assignment[ta] = [assignment, self.assignee[assignment]]
+                self.assignment[ta] = [[assignment, self.assignee[assignment]]]
             self.variables[ta] -= self.assignee[assignment]
+            # Need to change #
+            return self.assignee[assignment]
         else:
             # print self.assignment[ta]
-            self.assignment[ta] = [assignment, 1]
+            self.assignment[ta] = [[assignment, 1]]
             self.variables[ta] -= 1
+            # Need to change #
+            return 1;
 
     def removeFromAssignment(self, ta, assignment):
-        print "Removing assignment [", ta, assignment, "]"
+        # print "Removing assignment [", ta, assignment, "]"
+        # Same issues persists as of add function #]]]
         if self.assignee[assignment] <= 1:
             list = self.assignment[ta]
             list.pop()
@@ -194,27 +211,31 @@ class CSP:
 
     def backtracking_search(self, var, assign):
         # Assumption is if all TAs are assigned for their Full Time availability #
-        # Then it is considered as assignment complete #
+        # Then it is considered as assignment complete or if all the courses have their assignment complete #
+        result = False
         if self.isAssignmentComplete() == True:
             return True
-            # return self.assignment
         tas = copy.deepcopy(var)
         values = copy.deepcopy(assign)
         while len(tas) != 0:
             ta = tas.popitem()
-
             for val in values.keys():
                 if self.variables[ta[0]] == 0:
                     return True
-                if self.constraintCheck(ta[0], val):
-                    values.pop(val)
-                    self.addToAssignment(ta[0], val)
-                    result = self.backtracking_search(tas, values)
+                # Added extra condition to eliminate already completed assignments #
+                if self.constraintCheck(ta[0], val) and values[val] != 0:
+                    # values.pop(val)
+                    change = self.addToAssignment(ta[0], val)
+                    values[val] -= change
+                    if self.variables[ta[0]] == 0:
+                        result = self.backtracking_search(tas, values)
                     if result == True:
-                        print "Assignment Succeeded.!"
+                        # print "Assignment Succeeded.!"
                         return True
-                    self.removeFromAssignment(ta[0], val)
-
+                    # Problem is here #
+                    if self.variables[ta[0]] == 0:
+                        self.removeFromAssignment(ta[0], val)
+                        values[val] += change
         return False
 
 
@@ -249,6 +270,9 @@ class CSP:
         return True
 
     def constraintCheck(self, ta, course):
+
+        # Check if the course is already filled/TA Not required #
+            # This check can be done in backtracking search #
         # Check if TA has all the required skills #
         if not self.skillTest(ta, course): return False
 
@@ -259,16 +283,16 @@ class CSP:
         if self.isTARequiredToAttendClass(course):
             return self.checkIfTAIsFree(ta, course)
 
+        # If the control comes here, all the Cases are passed #
+        return True
+
 if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
     obj.updateValues('testInput')
-    # obj.computeTACntForClass()
-    # print "Does TA1 has all the skills for RAJ? ", obj.skillTest('TA1','RAJ',inp)
-    # print "Dude:", obj.isTARequiredToAttendClass('CSE101')
-    # print obj.constraintCheck('TA3', 'CSE101')
     print obj.backtracking_search(obj.variables, obj.assignee)
     print "Variables : ", obj.variables
     print
     print "Assignees: ", obj.assignee
     print "Assignment: ", obj.assignment
+    # print obj.courseTACount

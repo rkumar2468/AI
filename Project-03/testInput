@@ -11,7 +11,7 @@ CSE150, Mon, 1:00 PM, Fri, 1:00 PM
 
 CSE101, Mon, 2:30 PM
 CSE102, Fri, 4:00 PM
-CSE110, wed, 5:30 PM
+CSE110, Wed, 5:30 PM
 CSE114, Mon, 2:30 PM
 CSE130, Tue, 2:30 PM
 
@@ -28,7 +28,7 @@ CSE150, 13, no
 
 CSE101, Java, C++
 CSE102, C, Python, C#, Networking, Data structures
-CSE110, C, C++, Java, JavaScript, JSP, Python, C#,
+CSE110, C, C++, Java, JavaScript, JSP, Python, C#
 CSE114, C, Java, JavaScript, JSP, Python, C#, Hacking Skills, Security, Networking
 CSE130, C#, Awesome Hacking Skills, Security, Networking, Data structures
 
@@ -41,6 +41,6 @@ TA3, Tue, 12:30 PM
 
 6. TA skills: skills possessed by each TA: name followed by list of skills. Example:
 
-TA1, C, C++, Java, JavaScript, Awesome Hacking Skills
-TA2, Java, JavaScript, JSP, Python, Awesome Hacking Skills
-TA3, C++, Java, JavaScript, JSP, Awesome Hacking Skills
+TA1, C, C++, Java, JavaScript, C#, Python
+TA2, Java, JavaScript, JSP, Python, Awesome Hacking Skills, C#
+TA3, C++, Java, JavaScript, JSP, Awesome Hacking Skills, C#
