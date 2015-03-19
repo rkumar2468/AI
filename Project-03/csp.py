@@ -205,7 +205,7 @@ class CSP:
             self.variables[ta] += self.assignee[assignment]
         else:
             self.assignment.pop(ta)
-            self.variables[ta] -= 1
+            self.variables[ta] += 1
 
     def backtracking_search(self, var, assign):
         # Assumption is if all TAs are assigned for their Full Time availability #
@@ -290,7 +290,8 @@ class CSP:
 if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
-    obj.updateValues('testInput')
+    obj.updateValues('dataset_AI_CSP')
+    # obj.updateValues('testInput')
     ret = obj.backtracking_search(obj.variables, obj.assignee)
     if ret == False:
         print "Complete Assignment failed. Only partial assignment done.!\n"
