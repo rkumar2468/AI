@@ -187,7 +187,10 @@ class CSP:
             return self.assignee[assignment]
         else:
             taOccupancy = 1 - self.variables[ta]
-            self.assignment[ta] = [[assignment, taOccupancy]]
+            if ta in self.assignment.keys():
+                self.assignment[ta].append([assignment, taOccupancy])
+            else:
+                self.assignment[ta] = [[assignment, taOccupancy]]
             self.variables[ta] -= taOccupancy
             # Need to change - Changed from 1 to taOccupancy#
             return taOccupancy
@@ -290,13 +293,16 @@ class CSP:
 if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
-    obj.updateValues('dataset_AI_CSP')
-    # obj.updateValues('testInput')
+    # obj.updateValues('dataset_AI_CSP')
+    obj.updateValues('testInput')
     ret = obj.backtracking_search(obj.variables, obj.assignee)
     if ret == False:
         print "Complete Assignment failed. Only partial assignment done.!\n"
     print "Variables : ", obj.variables
     print
     print "Assignees: ", obj.assignee, "\n"
-    print "Assignment: ", obj.assignment
+    print obj.assignment
+    # f=open('test.txt','w')
+    # f.write(obj.assignment)
+    # f.close()
     # print obj.courseTACount
