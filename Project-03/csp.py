@@ -174,24 +174,23 @@ class CSP:
         # print "Adding assignment [", ta, assignment, "]"
         if self.variables[ta] == 0:
             return 0
-
         if self.assignee[assignment] <= 1:
             if ta in self.assignment.keys():
                 # Need to change it for proper formatting - Done #
                 # There are potential issues with this assignment #
-                # self.assignee should be updated or else will have issues #
+                # self.assignee should be updated or else will have issues - Not required#
                 self.assignment[ta].append([assignment, self.assignee[assignment]])
             else:
                 self.assignment[ta] = [[assignment, self.assignee[assignment]]]
             self.variables[ta] -= self.assignee[assignment]
-            # Need to change #
+            # Need to change - Not here but in the next control block(else) #
             return self.assignee[assignment]
         else:
-            # print self.assignment[ta]
-            self.assignment[ta] = [[assignment, 1]]
-            self.variables[ta] -= 1
-            # Need to change #
-            return 1;
+            taOccupancy = 1 - self.variables[ta]
+            self.assignment[ta] = [[assignment, taOccupancy]]
+            self.variables[ta] -= taOccupancy
+            # Need to change - Changed from 1 to taOccupancy#
+            return taOccupancy
 
     def removeFromAssignment(self, ta, assignment):
         # print "Removing assignment [", ta, assignment, "]"
