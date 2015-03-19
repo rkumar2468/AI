@@ -19,14 +19,13 @@ class CSP:
         self.assignee = {}
         self.courseTACount = {}
 
-    def isCourseAssignmentComplete(self):
-        assignment = self.assignee.values()
+    def isCourseAssignmentComplete(self, assignment):
         return ([0]*len(assignment) == assignment)
 
     def isAssignmentComplete(self):
 
         # To check if the all the courses have a TA assigned #
-        if self.isCourseAssignmentComplete():
+        if self.isCourseAssignmentComplete(self.assignee.values()):
             return True
 
         varLen = len(self.variables.keys())
@@ -101,7 +100,7 @@ class CSP:
             return True
         classReciteTime = self.timeToNum(recitations[1])
         taClassTime = self.timeToNum(responsibilities[1])
-        print "Recitation check for [", ta, course, "]"
+        # print "Recitation check for [", ta, course, "]"
         return self.timeRangeCheck(classReciteTime, taClassTime, self.classTime, self.recitationTime)
 
     def skillTest(self, ta, course):
@@ -129,9 +128,9 @@ class CSP:
         # print courseReq[course]
         percent = float(len(list))/float(lenCourse)
         if len(list) != 0 and percent > 0.8:
-            print "Skill Test failed for ta: %s Course: %s" %(ta, course)
+            # print "Skill Test failed for ta: %s Course: %s" %(ta, course)
             return False
-        print "\nSkill matches for ta: %s Course: %s\n" %(ta, course)
+        # print "\nSkill matches for ta: %s Course: %s\n" %(ta, course)
         return True
 
     def computeTACntForClass(self):
@@ -233,9 +232,12 @@ class CSP:
                         # print "Assignment Succeeded.!"
                         return True
                     # Problem is here #
-                    if self.variables[ta[0]] == 0:
+                    elif self.variables[ta[0]] == 0:
                         self.removeFromAssignment(ta[0], val)
                         values[val] += change
+        # temp = values
+        if self.isCourseAssignmentComplete(values.values()):
+            return True
         return False
 
 
@@ -290,9 +292,11 @@ if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
     obj.updateValues('testInput')
-    print obj.backtracking_search(obj.variables, obj.assignee)
+    ret = obj.backtracking_search(obj.variables, obj.assignee)
+    if ret == False:
+        print "Complete Assignment failed. Only partial assignment done.!\n"
     print "Variables : ", obj.variables
     print
-    print "Assignees: ", obj.assignee
+    print "Assignees: ", obj.assignee, "\n"
     print "Assignment: ", obj.assignment
     # print obj.courseTACount
