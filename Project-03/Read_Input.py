@@ -17,7 +17,8 @@ class readInputFile:
             sys.exit(-1)
         f=open(self.file,'r')
         count=0
-        for line in f:
+        for l in f:
+            line = l.lstrip(' ');
             if ('1.' in line) or ('2.' in line) or ('3.' in line) or ('4.' in line) or ('5.' in line) or ('6.' in line):
                 count=count-1
                 continue

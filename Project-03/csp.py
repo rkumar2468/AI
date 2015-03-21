@@ -173,29 +173,21 @@ class CSP:
         # return inp
 
     def addToAssignment(self, ta, assignment,value):
-        # print "Adding assignment [", ta, assignment, "]"
         if self.variables[ta] == 0:
             return 0
-        #print "Assignee in addToAssignment:",self.assignee[assignment]
-        #print "Assignment in addToAssignment",self.assignment
         val=min(self.variables[ta],value)
-        #print "Val:",val
-        #if self.assignee[assignment] <= 1:
         if ta in self.assignment.keys():
-                # Need to change it for proper formatting - Done #
-                # There are potential issues with this assignment #
-                # self.assignee should be updated or else will have issues - Not required#
             self.assignment[ta].append([assignment, val])
         else:
             self.assignment[ta] = [[assignment, val]]
         self.variables[ta] -= val
-            # Need to change - Not here but in the next control block(else) #
-            #print "Assignee:",self.assignee
+
         return val
 
     def removeFromAssignment(self, ta, assignment, val):
         list = self.assignment[ta]
-        list.pop() # Need to check if the pop is doing last updated value - Yes it is updated.
+        x= list.pop() # Need to check if the pop is doing last updated value - Yes it is updated.
+
         if len(list) != 0:
             self.assignment[ta] = list
         else:
@@ -220,7 +212,7 @@ class CSP:
                 # Added extra condition to eliminate already completed assignments #
                 if values[val] != 0 and self.constraintCheck(ta[0], val) :
                     # values.pop(val)
-                    change = self.addToAssignment(ta[0], val,values[val])
+                    change = self.addToAssignment(ta[0], val, values[val])
                     values[val] -= change
                     if self.variables[ta[0]] == 0:
                         result = self.backtracking_search(tas, values)
@@ -230,6 +222,9 @@ class CSP:
                     elif self.variables[ta[0]] == 0:
                         self.removeFromAssignment(ta[0], val, change)
                         values[val] += change
+
+            if not self.isCourseAssignmentComplete(values.values()) and self.variables[ta[0]] == 1:
+                return False
 
         if self.isCourseAssignmentComplete(values.values()):
             return True
@@ -283,9 +278,7 @@ class CSP:
         # If the control comes here, all the Cases are passed #
         return True
 
-    """
-    Code added by Sruti for implementing BT with FC
-    """
+
     def forward_checking(self,variables,domain):
         # Assumption is if all TAs are assigned for their Full Time availability #
         # Then it is considered as assignment complete or if all the courses have their assignment complete #
@@ -333,7 +326,7 @@ class CSP:
 if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
-    #obj.updateValues('dataset_AI_CSP')
+    # obj.updateValues('dataset_AI_CSP')
     # obj.updateValues('testInput')
     obj.updateValues('testInput2')
     print obj.assignee

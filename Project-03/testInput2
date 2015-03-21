@@ -50,11 +50,6 @@ TA7, Wed, 11:30 PM
 TA8, Wed, 11:30 PM
 TA9, Wed, 11:30 PM
 TA10, Wed, 11:30 PM
-TA11, Wed, 11:30 PM
-TA22, Wed, 11:30 PM
-TA33, Wed, 11:30 PM
-TA44, Wed, 11:30 PM
-TA55, Wed, 11:30 PM 
 
 6. TA skills: skills possessed by each TA: name followed by list of skills. Example:
 
@@ -68,14 +63,3 @@ TA7, Data structures, C#
 TA8, Networking
 TA9, Data structures
 TA10, Java
-TA11, Java
-TA22, C
-TA33, C++
-TA44, JSP
-TA55, Security
-TA66, Python
-TA77, Data structures, C#
-TA88, Networking
-TA99, Data structures
-TA1010, Java
-
