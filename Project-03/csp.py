@@ -430,7 +430,7 @@ if __name__ == '__main__':
     # obj.updateValues('testInput2')
 
     print "Variables : ", obj.variables,"\n"
-    print "Domain: ", obj.assignee, "\n"
+    print "Domains: ", obj.assignee, "\n"
 
     #ret = obj.backtracking_search(obj.variables, obj.assignee)
     ret=obj.forward_checking(obj.variables,obj.assignee)
