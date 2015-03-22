@@ -4,12 +4,16 @@ import Read_Input
 class CSP:
 
     def __init__(self):
+
+        """
+        This function is a constructor to the class and initializes all the data structures
+        :return:
+        """
         self.assignment = {}
         self.variables = {}
         self.courseTACount = {}
         self.assignee = {}
         self.inp = None
-        # Default Values #
         self.recitationTime = 90
         self.classTime = 90
         self.inValidAssign=[]
@@ -21,19 +25,27 @@ class CSP:
         self.courseTACount = {}
 
     def isCourseAssignmentComplete(self, assignment):
+        """
+        This function checks if all the courses are assigned with TAs
+        :param assignment:
+        :return:
+        """
         return ([0]*len(assignment) == assignment)
 
     def isAssignmentComplete(self):
+        """
+        This function checks if the assignment is complete #
+        :return: True/False
+        """
 
-        # To check if the all the courses have a TA assigned #
         if self.isCourseAssignmentComplete(self.assignee.values()):
-            print "In is Assignment complete; self.assignee.values:",self.assignee.values
             return True
 
         varLen = len(self.variables.keys())
         assignLen = len(self.assignment.keys())
         if varLen == 0 or assignLen == 0:
             return False
+
         ## Pending: Need to call a function which checks if all the TAs are 100% assigned ##
 
         return (varLen == assignLen)
@@ -98,11 +110,14 @@ class CSP:
             return True
         recitations = recitationList[course]
         responsibilities = self.inp.getTAResponsibilities()[ta]
+
+        # The day of the class recitation and the TA's course are different
         if recitations[0] != responsibilities[0]:
             return True
+
         classReciteTime = self.timeToNum(recitations[1])
         taClassTime = self.timeToNum(responsibilities[1])
-        # print "Recitation check for [", ta, course, "]"
+
         return self.timeRangeCheck(classReciteTime, taClassTime, self.classTime, self.recitationTime)
 
     def skillTest(self, ta, course):
@@ -116,23 +131,22 @@ class CSP:
         taSkill = self.inp.getTASkills()
         courseReq = self.inp.getCourseRequirements()
 
-        # Assumption : If TA doesnt have any skill, just returning False. #
-        # Not sure if this is really needed ?? #
+        # Assumption : If TA doesnt have any skill returning False./ If the course does not have any specific requirement return True #
 
+        #If the TA does not have any skill, return False
         if ta not in taSkill.keys() or len(taSkill[ta]) == 0: return False
+
+        #If the course has no specific skill, return True
         if course not in courseReq.keys(): return True
 
-        # Assumption : If the course doesnt have any requirements, then any TA can be allotted. #
         lenCourse = len(courseReq[course])
-        # if lenCourse == 0: return True
-        # print taSkill[ta]
+
         list = [x for x in courseReq[course] if x not in taSkill[ta]]
-        # print courseReq[course]
+
+        # To check if the TA skills match maximum number of skills the course requires.
         percent = float(len(list))/float(lenCourse)
         if len(list) != 0 and percent > 0.8:
-            # print "Skill Test failed for ta: %s Course: %s" %(ta, course)
             return False
-        # print "\nSkill matches for ta: %s Course: %s\n" %(ta, course)
         return True
 
     def computeTACntForClass(self):
@@ -152,12 +166,12 @@ class CSP:
                     self.courseTACount[key] = 2
                 else :
                     self.courseTACount[key] = 0
-        # print self.courseTACount
+
 
     def updateValues(self, filename, recitationTime=90, classTime=90):
         """
         This function generates all the data structures by parsing the input file.
-        :return: readInputFile object
+        :return: void
         """
         inp = Read_Input.readInputFile(filename)
         inp.generateListsFromInputFile()
@@ -166,16 +180,29 @@ class CSP:
         self.classTime = classTime
         self.computeTACntForClass()
         tas = inp.getTAResponsibilities().keys()
+
+        # Initializing all the variables(TAs) to 1
         for ta in tas:
             self.variables[ta] = 1
+
+        #Initializing all the courses to the number of TAs required
         for course in inp.getCourseTime().keys():
             self.assignee[course] = self.courseTACount[course]
-        # return inp
+
 
     def addToAssignment(self, ta, assignment,value):
+        """
+        This function adds a new assignment i.e TA and the corresponding course
+        :param ta: TA name
+        :param assignment: Course name
+        :param value: Amount of course to be assigned to the TA
+        :return: The amount of the course assigned
+        """
         if self.variables[ta] == 0:
             return 0
+
         val=min(self.variables[ta],value)
+
         if ta in self.assignment.keys():
             self.assignment[ta].append([assignment, val])
         else:
@@ -185,8 +212,15 @@ class CSP:
         return val
 
     def removeFromAssignment(self, ta, assignment, val):
+        """
+        This function removes an assignment from the existing list
+        :param ta: TA name
+        :param assignment: Course name
+        :param val: Amount of the course assigned to the TA
+        :return: void
+        """
         list = self.assignment[ta]
-        x= list.pop() # Need to check if the pop is doing last updated value - Yes it is updated.
+        list.pop()
 
         if len(list) != 0:
             self.assignment[ta] = list
@@ -196,168 +230,213 @@ class CSP:
         self.variables[ta]+=val
 
     def backtracking_search(self, var, assign):
+        """
+        This function performs the Backtracking search
+        :param var: The dictionary of TAs
+        :param assign: The dictionary of courses
+        :return: True/False (True of successful assignment; False otherwise)
+        """
         # Assumption is if all TAs are assigned for their Full Time availability #
         # Then it is considered as assignment complete or if all the courses have their assignment complete #
+
         result = False
         change = 0
+
+        #Check if the assignment is complete
         if self.isAssignmentComplete() == True:
-            #print "Assignment is complete"
             return True
+
         tas = copy.deepcopy(var)
         values = copy.deepcopy(assign)
-        # while len(tas) != 0:
+
+        #Remove the unassigned TA from the list
         ta = tas.popitem()
+
+
         for val in values.keys():
             if self.variables[ta[0]] == 0:
                 return True
-            # Added extra condition to eliminate already completed assignments #
+
             if values[val] != 0 and self.constraintCheck(ta[0], val) :
-                # values.pop(val)
                 change = self.addToAssignment(ta[0], val, values[val])
                 values[val] -= change
                 if self.variables[ta[0]] == 0:
-                    print "Entering Recursion from ", ta[0], " with ",tas, values
                     result = self.backtracking_search(tas, values)
                 if result == True:
-                    print "Returning true from ", ta[0], " with ",tas, val
                     return True
-                # Problem is here - Resolved #
                 elif self.variables[ta[0]] == 0:
                     self.removeFromAssignment(ta[0], val, change)
                     values[val] += change
-                    print "Removing entries due to failure at ", ta[0], " with ",tas, val," Curr Val: ", values
 
         if not self.isCourseAssignmentComplete(values.values()) and self.variables[ta[0]] == 1:
-            print "For loop exhausted for ", ta[0]
             return False
 
         if self.isCourseAssignmentComplete(values.values()):
             return True
 
-        print "Returning False after no assignment to ", ta[0], values
         if self.variables[ta[0]] == 0.5:
-            """
-            This is essentially a partial assignment
-            """
+
+            #This is a partial assignment for the TA
+
             ret = self.backtracking_search(tas, values)
             if ret == True:
                 return True
             else:
-                # Remove self.variable entry #
-                # Update values (optional) #
-                # return false #
                 self.removeFromAssignment(ta[0], val, change)
                 values[val] += change
                 return False
 
     def checkIfTAIsFree(self, ta, course):
+        """
+        This function checks if the TA is available during the course hours
+        :param ta: TA name
+        :param course: Course name
+        :return: True/False
+        """
+
         courseTimings = self.inp.getCourseTime()[course]
 
-        # Need to revisit #
-        if len(courseTimings)%2 != 0:
-            #print "Course Timings Error for the course: ", course
+        lenTimings = len(courseTimings)
+
+        if lenTimings%2 != 0:
             sys.exit(-1)
 
+        numTimings = lenTimings/2
+
         responsibilities = self.inp.getTAResponsibilities()[ta]
-        # print courseTimings, responsibilities
-        if courseTimings[0] != responsibilities[0] and courseTimings[2] != responsibilities[0]:
+
+        isSame = 0
+
+        for i in range(0,numTimings):
+            if courseTimings[i*2] == responsibilities[0]:
+                isSame = 1
+                break
+
+        if isSame != 1:
             return True
 
         taClassTime = self.timeToNum(responsibilities[1])
-        if courseTimings[0] == responsibilities[0]:
-            courseFirstTime = self.timeToNum(courseTimings[1])
-            # print taClassTime, courseFirstTime
-            if not self.timeRangeCheck(courseFirstTime,taClassTime,self.classTime,self.classTime):
-                return False
-        if courseTimings[2] == responsibilities[0]:
-            courseFirstTime = self.timeToNum(courseTimings[3])
-            # print taClassTime, courseFirstTime
-            if not self.timeRangeCheck(courseFirstTime,taClassTime,self.classTime,self.classTime):
-                return False
 
-        # print courseTimings
+        for i in range(0,numTimings):
+            if courseTimings[i*2] == responsibilities[0]:
+                courseTime = self.timeToNum(courseTimings[i*2+1])
+
+                if not self.timeRangeCheck(courseTime,taClassTime,self.classTime,self.classTime):
+                    return False
+
         return True
 
+
     def constraintCheck(self, ta, course):
-        # Check if the course is already filled/TA Not required #
-            # This check can be done in backtracking search #
+        """
+        This function checks if an assignment satisfies all the given constraints
+        :param ta: TA name
+        :param course: Course name
+        :return: True/False
+        """
+
         # Check if TA has all the required skills #
         if not self.skillTest(ta, course): return False
-        # Check if TA has to attend the class, # if yes ,Check if TA Class timings doesnt class with Course Recitations
-        # TA has to be free during the class timings #
+
+        # Check if TA has to attend the class/recitation.
+        # If yes ,check if TA Class timings don't overlap with the with Course Recitation timings
+        # Also, the TA has to be free during the class timings #
+
         if self.isTARequiredToAttendClass(course):
             if not self.recitationConstraintCheck(ta, course): return False
 
             return self.checkIfTAIsFree(ta, course)
 
-        # If the control comes here, all the Cases are passed #
         return True
 
 
     def forward_checking(self,variables,domain):
+        """
+        This function performs backtracking search with forward checking
+        :param variables: The dictionary of TAs
+        :param domain: The dictionary of courses
+        :return: True/False (True of successful assignment; False otherwise)
+        """
         # Assumption is if all TAs are assigned for their Full Time availability #
         # Then it is considered as assignment complete or if all the courses have their assignment complete #
+
         result = False
+
+        #Check if the assignment is complete
+
         if self.isAssignmentComplete() == True:
-            #print "Assignment is complete"
             return True
+
         tas = copy.deepcopy(variables)
         values = copy.deepcopy(domain)
-        while len(tas) != 0:
-            ta = tas.popitem()
-            for val in values.keys():
-                if self.variables[ta[0]] == 0:
-                    return True
-                #print "Before Constraint check:",ta[0],val
-                # Added extra condition to eliminate already completed assignments #
-                if values[val]!=0 and self.constraintCheck(ta[0], val):
-                    # values.pop(val)
-                    change = self.addToAssignment(ta[0], val,values[val])
-                    #print "Retval in BT:",change
-                    #print "Assignment:",ta[0],val
-                    values[val] -= change
-                    #print "Value of val:",values[val]
-                    if(values[val]==0):
-                        values.pop(val)
-                    #print "Values in forward checking:",values
-                    if self.variables[ta[0]] == 0:
-                        result = self.forward_checking(tas, values)
-                    if result == True:
-                        # print "Assignment Succeeded.!"
-                        return True
-                    # Problem is here #
-                    elif self.variables[ta[0]] == 0:
-                        self.removeFromAssignment(ta[0], val, change)
-                        # The popped value is being added at the end; don't know if it will be a problem
-                        values[val]=change
-                        #print "Values after replacing the val:",values
 
-        # temp = values
+        #Remove the unassigned TA from the list
+        ta = tas.popitem()
+
+        for val in values.keys():
+            if self.variables[ta[0]] == 0:
+                return True
+            if values[val]!=0 and self.constraintCheck(ta[0], val):
+                change = self.addToAssignment(ta[0], val,values[val])
+                values[val] -= change
+
+                if(values[val]==0):
+                    values.pop(val)
+
+                if self.variables[ta[0]] == 0:
+                    result = self.forward_checking(tas, values)
+                if result == True:
+                    return True
+                elif self.variables[ta[0]] == 0:
+                    self.removeFromAssignment(ta[0], val, change)
+
+                    if val not in values:
+                        values[val]=change
+                    else:
+                        values[val]+=change
+
+
+        if not self.isCourseAssignmentComplete(values.values()) and self.variables[ta[0]] == 1:
+            return False
+
         if self.isCourseAssignmentComplete(values.values()):
             return True
-        return False
+
+        if self.variables[ta[0]] == 0.5:
+            #This is a partial assignment for the TA
+
+            ret = self.forward_checking(tas, values)
+            if ret == True:
+                return True
+            else:
+                self.removeFromAssignment(ta[0], val, change)
+                if val not in values:
+                        values[val]=change
+                else:
+                        values[val]+=change
+
+                return False
 
 
 if __name__ == '__main__':
-    print ("Testing CSP.!")
+
+    print ("=======Constraint Propagation=======")
+
     obj = CSP()
-    obj.updateValues('Sai_Input')
+
+    #obj.updateValues('Sai_Input')
     # obj.updateValues('dataset_AI_CSP')
-    # obj.updateValues('testInput')
+    obj.updateValues('testInput')
     # obj.updateValues('testInput2')
-    # print obj.assignee
-    # print "Variables : ", obj.variables
-    print
-    # print "Assignees: ", obj.assignee, "\n"
-    ret = obj.backtracking_search(obj.variables, obj.assignee)
-    #ret=obj.forward_checking(obj.variables,obj.assignee)
+
+    print "Variables : ", obj.variables,"\n"
+    print "Domain: ", obj.assignee, "\n"
+
+    #ret = obj.backtracking_search(obj.variables, obj.assignee)
+    ret=obj.forward_checking(obj.variables,obj.assignee)
+
     if ret == False:
         print "Complete Assignment failed. Only partial assignment done.!\n"
 
     print "Assignment:",obj.assignment
-    # f=open('test.txt','w')
-    # for keys in obj.assignment.keys():
-    #     print >> f, "Key - ", keys, " Val: ", obj.assignment[keys], "\n"
-    # f.close()
-    # obj.forward_checking(obj.variables,obj.assignee)
-    # print obj.courseTACount
+
