@@ -1,3 +1,6 @@
+"""
+Authors: Rajendra Kumar RK; Sri Sruti Mandadapu
+"""
 import os, sys
 
 class readInputFile:
