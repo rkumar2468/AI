@@ -1,12 +1,22 @@
+"""
+***Constraint Propagation***
+Authors: Rajendra Kumar R; Sri Sruti Mandadapu
+"""
+
 import copy, sys
 import Read_Input
+import timeit
+
+numBSNodes=0
+numFCNodes=0
+numACNodes=0
 
 class CSP:
 
     def __init__(self):
 
         """
-        This function is a constructor to the class and initializes all the data structures
+        This function is a constructor of the class and initializes all the data structures
         :return:
         """
         self.assignment = {}
@@ -27,8 +37,8 @@ class CSP:
     def isCourseAssignmentComplete(self, assignment):
         """
         This function checks if all the courses are assigned with TAs
-        :param assignment:
-        :return:
+        :param assignment: Domain values(courses)
+        :return: True/False
         """
         return ([0]*len(assignment) == assignment)
 
@@ -242,6 +252,7 @@ class CSP:
         result = False
         change = 0
 
+        global numBSNodes
         #Check if the assignment is complete
         if self.isAssignmentComplete() == True:
             return True
@@ -254,6 +265,7 @@ class CSP:
 
 
         for val in values.keys():
+            numBSNodes+=1
             if self.variables[ta[0]] == 0:
                 return True
 
@@ -361,7 +373,7 @@ class CSP:
         # Then it is considered as assignment complete or if all the courses have their assignment complete #
 
         result = False
-
+        global numFCNodes
         #Check if the assignment is complete
 
         if self.isAssignmentComplete() == True:
@@ -374,6 +386,7 @@ class CSP:
         ta = tas.popitem()
 
         for val in values.keys():
+            numFCNodes+=1
             if self.variables[ta[0]] == 0:
                 return True
             if values[val]!=0 and self.constraintCheck(ta[0], val):
@@ -424,16 +437,25 @@ if __name__ == '__main__':
 
     obj = CSP()
 
-    #obj.updateValues('Sai_Input')
-    # obj.updateValues('dataset_AI_CSP')
-    obj.updateValues('testInput')
-    # obj.updateValues('testInput2')
+    #obj.updateValues('testInput1')
+    obj.updateValues('Test_Input_Files/testInput2')
+    # obj.updateValues('testInput3')
 
     print "Variables : ", obj.variables,"\n"
     print "Domains: ", obj.assignee, "\n"
 
-    #ret = obj.backtracking_search(obj.variables, obj.assignee)
+    # startTimeBT=timeit.default_timer() # The time when the backtracking search starts its execution
+    # ret = obj.backtracking_search(obj.variables, obj.assignee)
+    # endTimeBT=timeit.default_timer() # The time when the backtracking search ends its execution
+    # runTimeBT=endTimeBT-startTimeBT
+    # print "Total number of nodes expanded for Backtracking Search:",numBSNodes
+    # print "Total time taken by the backtracking search algorithm:",runTimeBT," seconds"
+    startTimeFC=timeit.default_timer() # The time when the backtracking search starts its execution
     ret=obj.forward_checking(obj.variables,obj.assignee)
+    endTimeFC=timeit.default_timer() # The time when the backtracking search ends its execution
+    runTimeFC=endTimeFC-startTimeFC
+    print "Total number of nodes expanded for Backtracking Search with Forward Checking:",numFCNodes
+    print "Total time taken by the Forward checking algorithm:",runTimeFC," seconds"
 
     if ret == False:
         print "Complete Assignment failed. Only partial assignment done.!\n"
