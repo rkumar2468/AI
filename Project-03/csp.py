@@ -199,37 +199,56 @@ class CSP:
         # Assumption is if all TAs are assigned for their Full Time availability #
         # Then it is considered as assignment complete or if all the courses have their assignment complete #
         result = False
+        change = 0
         if self.isAssignmentComplete() == True:
             #print "Assignment is complete"
             return True
         tas = copy.deepcopy(var)
         values = copy.deepcopy(assign)
-        while len(tas) != 0:
-            ta = tas.popitem()
-            for val in values.keys():
+        # while len(tas) != 0:
+        ta = tas.popitem()
+        for val in values.keys():
+            if self.variables[ta[0]] == 0:
+                return True
+            # Added extra condition to eliminate already completed assignments #
+            if values[val] != 0 and self.constraintCheck(ta[0], val) :
+                # values.pop(val)
+                change = self.addToAssignment(ta[0], val, values[val])
+                values[val] -= change
                 if self.variables[ta[0]] == 0:
+                    print "Entering Recursion from ", ta[0], " with ",tas, values
+                    result = self.backtracking_search(tas, values)
+                if result == True:
+                    print "Returning true from ", ta[0], " with ",tas, val
                     return True
-                # Added extra condition to eliminate already completed assignments #
-                if values[val] != 0 and self.constraintCheck(ta[0], val) :
-                    # values.pop(val)
-                    change = self.addToAssignment(ta[0], val, values[val])
-                    values[val] -= change
-                    if self.variables[ta[0]] == 0:
-                        result = self.backtracking_search(tas, values)
-                    if result == True:
-                        return True
-                    # Problem is here - Resolved #
-                    elif self.variables[ta[0]] == 0:
-                        self.removeFromAssignment(ta[0], val, change)
-                        values[val] += change
+                # Problem is here - Resolved #
+                elif self.variables[ta[0]] == 0:
+                    self.removeFromAssignment(ta[0], val, change)
+                    values[val] += change
+                    print "Removing entries due to failure at ", ta[0], " with ",tas, val," Curr Val: ", values
 
-            if not self.isCourseAssignmentComplete(values.values()) and self.variables[ta[0]] == 1:
-                return False
+        if not self.isCourseAssignmentComplete(values.values()) and self.variables[ta[0]] == 1:
+            print "For loop exhausted for ", ta[0]
+            return False
 
         if self.isCourseAssignmentComplete(values.values()):
             return True
-        return False
 
+        print "Returning False after no assignment to ", ta[0], values
+        if self.variables[ta[0]] == 0.5:
+            """
+            This is essentially a partial assignment
+            """
+            ret = self.backtracking_search(tas, values)
+            if ret == True:
+                return True
+            else:
+                # Remove self.variable entry #
+                # Update values (optional) #
+                # return false #
+                self.removeFromAssignment(ta[0], val, change)
+                values[val] += change
+                return False
 
     def checkIfTAIsFree(self, ta, course):
         courseTimings = self.inp.getCourseTime()[course]
@@ -245,7 +264,6 @@ class CSP:
             return True
 
         taClassTime = self.timeToNum(responsibilities[1])
-
         if courseTimings[0] == responsibilities[0]:
             courseFirstTime = self.timeToNum(courseTimings[1])
             # print taClassTime, courseFirstTime
@@ -261,13 +279,10 @@ class CSP:
         return True
 
     def constraintCheck(self, ta, course):
-
         # Check if the course is already filled/TA Not required #
             # This check can be done in backtracking search #
         # Check if TA has all the required skills #
         if not self.skillTest(ta, course): return False
-
-
         # Check if TA has to attend the class, # if yes ,Check if TA Class timings doesnt class with Course Recitations
         # TA has to be free during the class timings #
         if self.isTARequiredToAttendClass(course):
@@ -326,13 +341,14 @@ class CSP:
 if __name__ == '__main__':
     print ("Testing CSP.!")
     obj = CSP()
+    obj.updateValues('Sai_Input')
     # obj.updateValues('dataset_AI_CSP')
     # obj.updateValues('testInput')
-    obj.updateValues('testInput2')
-    print obj.assignee
-    print "Variables : ", obj.variables
+    # obj.updateValues('testInput2')
+    # print obj.assignee
+    # print "Variables : ", obj.variables
     print
-    print "Assignees: ", obj.assignee, "\n"
+    # print "Assignees: ", obj.assignee, "\n"
     ret = obj.backtracking_search(obj.variables, obj.assignee)
     #ret=obj.forward_checking(obj.variables,obj.assignee)
     if ret == False:
