@@ -515,7 +515,7 @@ class CSP:
 if __name__ == '__main__':
 
     print ("=======Constraint Propagation=======")
-    print "Algorithm to be used: \n 1. Pure Backtracking Search\n 2. Backtracking Search + Forward Checking \n 3.Backtracking Search + Forward Checking + Arc Consistency "
+    print "Algorithm to be used: \n 1. Pure Backtracking Search\n 2. Backtracking Search + Forward Checking \n 3. Backtracking Search + Forward Checking + Arc Consistency "
     choice = input()
     if  choice == '' or not (choice >= 1 and choice <= 3):
         print "Wrong Choice.!"
