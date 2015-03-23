@@ -430,32 +430,132 @@ class CSP:
 
                 return False
 
+    def arcConsistency_check(self,varDomain):
+        """
+        This functions makes each variable consistent with other variables
+        :param varDomain: A dictionary which consists of all TAs and their corresponding valid courses
+        :return: True/False (True: All TAs are arc consistent with other TAs, otherwise False)
+        """
+        tas = copy.deepcopy(varDomain.keys())
+
+        isUpdated = False
+        while len(tas) != 0:
+            if isUpdated == False:
+                ta = tas.pop()
+            else:
+                isUpdated = False
+
+            if len(varDomain[ta]) == 0:
+                print "Arc Consistency- Constraint Propagation failed."
+                return False
+
+            for remTa in tas:
+                for course in varDomain[ta]:
+
+                    if len(varDomain[remTa]) == 0:
+                        print "Arc Consistency- Constraint Propagation failed."
+                        return False
+
+                    if len([c for c in varDomain[remTa] if c != course]) == 0:
+                            varDomain[ta].remove(course)
+                            isUpdated = True
+
+        return True
+
+
+    def generateTACourseDictionary(self,variables,domain):
+        """
+        This function generates a data structure (dictionary) which contains TAs and their corresponding valid courses
+        :param variables: TA list
+        :param domain: Course list
+        :return: A dictionary
+        """
+
+        tas = variables.keys()
+        courses = domain.keys()
+
+        varDomain = {}
+
+        for ta in tas:
+            list=[]
+            for course in courses:
+                if domain[course] != 0 and self.constraintCheck(ta,course):
+                    list.append(course)
+            varDomain[ta] = list
+
+        return varDomain
+
+
+    def arcConsistency(self,variables,domain):
+
+        global numACNodes
+        varDomain = self.generateTACourseDictionary(variables,domain)
+        ret = self.arcConsistency_check(varDomain)
+
+        if ret == False:
+            return False
+
+        tas=varDomain.keys()
+        values=copy.deepcopy(domain)
+
+        while len(tas)!=0:
+            ta = tas.pop()
+
+            if self.variables[ta]==0:
+                return True
+            for course in varDomain[ta]:
+                numACNodes+=1
+                if(values[course]!=0):
+                    change=self.addToAssignment(ta,course,values[course])
+                    values[course] -= change
+                    if self.variables[ta]==0:
+                        break
+        return True
 
 if __name__ == '__main__':
 
     print ("=======Constraint Propagation=======")
+    print "Algorithm to be used: \n 1. Pure Backtracking Search\n 2. Backtracking Search + Forward Checking \n 3.Backtracking Search + Forward Checking + Arc Consistency "
+    choice = input()
+    if  choice == '' or not (choice >= 1 and choice <= 3):
+        print "Wrong Choice.!"
+        sys.exit(-1)
+
 
     obj = CSP()
-
-    #obj.updateValues('testInput1')
+    #obj.updateValues('Test_Input_Files/testInput1')
     obj.updateValues('Test_Input_Files/testInput2')
     # obj.updateValues('testInput3')
 
-    print "Variables : ", obj.variables,"\n"
-    print "Domains: ", obj.assignee, "\n"
+    if choice == 1:
 
-    # startTimeBT=timeit.default_timer() # The time when the backtracking search starts its execution
-    # ret = obj.backtracking_search(obj.variables, obj.assignee)
-    # endTimeBT=timeit.default_timer() # The time when the backtracking search ends its execution
-    # runTimeBT=endTimeBT-startTimeBT
-    # print "Total number of nodes expanded for Backtracking Search:",numBSNodes
-    # print "Total time taken by the backtracking search algorithm:",runTimeBT," seconds"
-    startTimeFC=timeit.default_timer() # The time when the backtracking search starts its execution
-    ret=obj.forward_checking(obj.variables,obj.assignee)
-    endTimeFC=timeit.default_timer() # The time when the backtracking search ends its execution
-    runTimeFC=endTimeFC-startTimeFC
-    print "Total number of nodes expanded for Backtracking Search with Forward Checking:",numFCNodes
-    print "Total time taken by the Forward checking algorithm:",runTimeFC," seconds"
+        #****** Backtracking ******* #
+        startTimeBT=timeit.default_timer() # The time when the backtracking search starts its execution
+        ret = obj.backtracking_search(obj.variables, obj.assignee)
+        endTimeBT=timeit.default_timer() # The time when the backtracking search ends its execution
+        runTimeBT=endTimeBT-startTimeBT
+        print "Total number of nodes expanded for Backtracking Search:",numBSNodes
+        print "Total time taken by the backtracking search algorithm:",runTimeBT," seconds"
+
+    elif choice == 2 :
+
+        # ******* Backtracking + Forward Checking ********* #
+        startTimeFC=timeit.default_timer() # The time when the backtracking search starts its execution
+        ret=obj.forward_checking(obj.variables,obj.assignee)
+        endTimeFC=timeit.default_timer() # The time when the backtracking search ends its execution
+        runTimeFC=endTimeFC-startTimeFC
+        print "Total number of nodes expanded for Backtracking Search with Forward Checking:",numFCNodes
+        print "Total time taken by the Forward checking algorithm:",runTimeFC," seconds"
+
+    else:
+
+        # ******** Backtracking + Forward Checking + Arc Consistency ******** #
+        startTimeAC=timeit.default_timer() # The time when the backtracking search starts its execution
+        ret=obj.arcConsistency(obj.variables,obj.assignee)
+        endTimeAC=timeit.default_timer() # The time when the backtracking search ends its execution
+        runTimeAC=endTimeAC-startTimeAC
+        print "Total number of nodes expanded for Backtracking Search with Forward Checking and Arc Consistency:",numACNodes
+        print "Total time taken by the Forward checking algorithm:",runTimeAC," seconds"
 
     if ret == False:
         print "Complete Assignment failed. Only partial assignment done.!\n"
