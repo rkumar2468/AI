@@ -45,34 +45,40 @@ class readInputFile:
 
             if lineList[1] == 'spam':
                 self.spamCnt += 1
-                for i in range(2, length-1, 2):
-                    self.spamWordsSet.add((lineList[i]))
-
-                    if lineList[i] in self.spamDict.keys():
-                        self.spamDict[lineList[i]].append(lineList[i+1])
+                for idx in range(2,length-1,2):
+                    val = lineList[idx]
+                    if val in self.spamDict.keys():
+                        self.spamDict[val] += 1
                     else:
-                        self.spamDict[lineList[i]] = [lineList[i+1]]
-
+                        self.spamDict[val] = 1
+                # sys.exit(-1)
+                # for i in range(2, length-1, 2):
+                #     self.spamWordsSet.add((lineList[i]))
+                #
+                #     if lineList[i] in self.spamDict.keys():
+                #         self.spamDict[lineList[i]].append(lineList[i+1])
+                #     else:
+                #         self.spamDict[lineList[i]] = [lineList[i+1]]
             else:
                 self.hamCnt += 1
-                for i in range(2, length-1, 2):
-                    self.hamWordsSet.add(lineList[i])
+                for idx in range(2,length-1,2):
+                    val = lineList[idx]
+                    if val in self.hamDict.keys():
+                        self.hamDict[val] += 1
+                    else:
+                        self.hamDict[val] = 1
+                # for i in range(2, length-1, 2):
+                #     self.hamWordsSet.add(lineList[i])
+                #
+                # if lineList[i] in self.hamDict.keys():
+                #         self.hamDict[lineList[i]].append(lineList[i+1])
+                # else:
+                #         self.hamDict[lineList[i]] = [lineList[i+1]]
 
-                if lineList[i] in self.hamDict.keys():
-                        self.hamDict[lineList[i]].append(lineList[i+1])
-                else:
-                        self.hamDict[lineList[i]] = [lineList[i+1]]
-
-            self.commonWords = self.spamWordsSet.intersection(self.hamWordsSet)
-
-            self.uniqueSpamWords['spam']= self.spamWordsSet.difference(self.commonWords)
-            self.uniqueHamWords['ham']=self.hamWordsSet.difference(self.commonWords)
-
-            self.mailList[self.mailCnt] = [(lineList[c],lineList[c+1]) for c in range(0,length-1,2)]
-            self.mailWordFreq[self.mailCnt] = sum([int(lineList[i]) for i in range(3, length, 2)])
-
-
-
-
-
-
+            # self.commonWords = self.spamWordsSet.intersection(self.hamWordsSet)
+            #
+            # self.uniqueSpamWords['spam']= self.spamWordsSet.difference(self.commonWords)
+            # self.uniqueHamWords['ham']=self.hamWordsSet.difference(self.commonWords)
+            #
+            # self.mailList[self.mailCnt] = [(lineList[c],lineList[c+1]) for c in range(0,length-1,2)]
+            # self.mailWordFreq[self.mailCnt] = sum([int(lineList[i]) for i in range(3, length, 2)])
