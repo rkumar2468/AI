@@ -12,7 +12,7 @@ class spamFilter:
         self.inp = None
 
     def getTrainDetails(self):
-        # sys.stdout = open("output.txt",'w')
+
         self.inp = readTrainData.readInputFile(self.file)
         self.inp.generateListsFromInputFile()
         # print "Number of mails in training data:",inp.mailCnt
@@ -40,12 +40,21 @@ class spamFilter:
         self.spamProb=float(self.inp.spamCnt)/float(self.inp.mailCnt)
 
 if __name__=='__main__':
+
+    # sys.stdout = open("output.txt",'w')
     spamObj = spamFilter('spam/data/train')
     spamObj.getTrainDetails()
     # for key in spamObj.inp.spamDict.keys():
     #     print key, spamObj.inp.spamDict[key]
     nb = baynet.NBayes('spam/data/test')
-    result = nb.run(spamObj)
+    print "Enter choice:\n1. All features\n2. Intersection features:\n"
+    choice = input()
+
+    if choice == '' or not (choice == 1 or choice == 2):
+         print "Wrong choice!"
+         sys.exit(-1)
+
+    result = nb.run(spamObj, choice)
     falseCnt = 0
     for key in result.keys():
         if result[key] != nb.classes[key]:
