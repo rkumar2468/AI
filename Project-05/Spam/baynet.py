@@ -1,4 +1,4 @@
-import sys, os
+import sys,os
 
 class NBayes:
     def __init__(self, testInpFile):

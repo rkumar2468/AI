@@ -18,6 +18,7 @@ class readInputData:
         self.featureNames = list()
         self.featureList = {} #Dictionary with feature number as key and its corresponding domain as value
         self.featureDiv = {} #Dictionary which will divide the domain of feature values into 4 sets
+        self.featureDist = {}
 
     def generateFileDS(self):
         """
@@ -89,7 +90,7 @@ class readInputData:
             self.featureList[feature] = domSet
             feature += 1
 
-
+        self.preprocess()
         # print self.featureList
 
         for feature in self.featureList.keys():
@@ -111,6 +112,7 @@ class readInputData:
         domList.sort(key=int)
         length = len(domList)
 
+        # print domList
         #print "Before sort:", domains
         #print "After sort:", domList
 
@@ -123,7 +125,40 @@ class readInputData:
 
         return [domList[med2Idx], domList[med1Idx], domList[med3Idx]]
 
+    def preprocess(self):
+
+        count = 0
+        for key in self.featureList.keys():
+
+            fList = list(self.featureList[key])
+
+            if(len(fList) == 1):
+                count += 1
+                del self.featureList[key]
+        print "C:",count
+
+    def calDistribution(self):
 
 
+        # f = open("featValsDistribution.txt",'w')
+
+        for key in self.featureList.keys():
+
+            fList = list(self.featureList[key])
+
+            fList.sort(key=int)
+
+            length = len(fList)
+            distList = list()
+
+            for i in range(length-1):
+                diff = int(fList[i])-int(fList[i+1])
+                distList.append(diff)
+
+            self.featureDist[key] = distList
+            print str(key)+":"
+            print fList
+            print distList
+            print "\n"
 
 

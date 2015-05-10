@@ -30,6 +30,7 @@ class decisionTree:
         self.inp = readTrainClickSData.readInputData(self.trainFeatFile, self.trainLabFile, self.featuresFile)
         self.inp.generateFileDS()
         self.inp.generateInputDS()
+        self.inp.calDistribution()
         self.trainExamples = copy.deepcopy(self.inp.featureMatrix)
         self.trainFeatures = copy.deepcopy(self.inp.featureList)
         self.trainLabels = copy.deepcopy(self.inp.trainLabels)
@@ -286,7 +287,7 @@ class decisionTree:
             print "Root:", root
             tree.createTree(root)
 
-            #Current majority vale
+            #Current majority value
             majorityVal = self.getMajorityValue(labels)
 
             del features[root]
@@ -312,9 +313,9 @@ class decisionTree:
                 print "Child and Root ",child.root.value, root
                 print "Features before deleting:",features
 
-                if child.root.value != 'Yes' and child.root.value != 'No' and bool(features) == True:
-                    del features[child.root.value] #Removing the selected feature from the feature list
-                print "Features after deleting:",features
+                # if child.root.value != 'Yes' and child.root.value != 'No' and bool(features) == True:
+                #     del features[child.root.value] #Removing the selected feature from the feature list
+                # print "Features after deleting:",features
 
             #   #add node to the root
 
@@ -378,10 +379,10 @@ class decisionTree:
 
 
 if __name__ == '__main__':
-    # sys.stdout = open("output.txt",'w')
-    obj = decisionTree('clickstream/clickstream-data/trainfeat_temp.csv','clickstream/clickstream-data/trainlabs_temp.csv','clickstream/clickstream-data/featnames_temp.csv')
+    sys.stdout = open("output.txt",'w')
+    obj = decisionTree('clickstream/clickstream-data/trainfeat.csv','clickstream/clickstream-data/trainlabs.csv','clickstream/clickstream-data/featnames.csv')
     obj.getTrainDetails()
-    obj.decisionTree_Learning(obj.trainExamples, obj.trainFeatures, obj.trainLabels, 'Yes')
+    #obj.decisionTree_Learning(obj.trainExamples, obj.trainFeatures, obj.trainLabels, 'Yes')
 
 
 
