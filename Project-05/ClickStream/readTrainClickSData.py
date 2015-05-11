@@ -135,7 +135,7 @@ class readInputData:
             if(len(fList) == 1):
                 count += 1
                 del self.featureList[key]
-        print "C:",count
+        # print "C:",count
 
     def calDistribution(self):
 
@@ -156,9 +156,9 @@ class readInputData:
                 distList.append(diff)
 
             self.featureDist[key] = distList
-            print str(key)+":"
-            print fList
-            print distList
-            print "\n"
+            # print str(key)+":"
+            # print fList
+            # print distList
+            # print "\n"
 
 

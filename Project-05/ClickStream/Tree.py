@@ -1,22 +1,53 @@
 __author__ = 'sri'
 
-
 class Node:
-        def __init__(self,val):
+        def __init__(self, val):
             self.value = val
             self.children = []
+            self.distribution = []
             self.parent = None
 
-class Tree:
+        def addDist(self, dist):
+            self.distribution = dist
 
-        def __init__(self):
-            self.root = None
-
-        def createTree(self,val):
-
-            if self.root == None:
-                print "No root"
-                self.root = Node(val)
-                print "Root val:",self.root.value
+        def addChildren(self, childNode):
+            if self.children:
+                self.children.append(childNode)
             else:
-                self.root.children.append(val)
+                self.children = [childNode]
+            childNode.parent = self
+
+        def getChildren(self):
+            return self.children
+
+        def getParent(self):
+            return self.parent
+
+        def getValue(self):
+            return self.value
+
+class TreeTraversals:
+       def __init__(self, node):
+           self.curr = node
+
+       def getParentList(self):
+           temp = self.curr
+           list = []
+           while temp.getParent() != None:
+             temp = temp.getParent()
+             list.append(temp.value)
+
+           return list
+
+       def dfs(self):
+           if self.curr:
+                self.dfsUtil(self.curr)
+
+       def dfsUtil(self, node):
+            print node.getValue(), ' -> ',
+            for i in node.getChildren():
+                self.dfsUtil(i)
+                print ','
+            print " //"
+
+

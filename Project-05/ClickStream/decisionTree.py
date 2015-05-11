@@ -1,13 +1,12 @@
 __author__ = 'sri'
 
-
 import os,sys
 import math
 import readTrainClickSData
 import copy
 import Tree
 
-
+headNode = None
 class decisionTree:
     """
     This class creates the decision tree for learning.
@@ -21,6 +20,8 @@ class decisionTree:
         self.trainExamples = None #The matrix which consists of the training examples and corresponding feature values
         self.trainFeatures = {} #training features dictionary
         self.trainLabels = [] #training labels list
+        self.levelFeatDict = {} #Dictionary of features at each level
+        self.level = -1 #Level of the decision tree
 
     def getTrainDetails(self):
         """
@@ -224,7 +225,7 @@ class decisionTree:
         # print "Length of examples in getBestAttribute:",length
 
         gainList = {} #Information gain with respect to all features
-        for key in features:
+        for key in features.keys():
             infoGain = self.computeInfoGain(examples, labels, key)
             gainList[key] = infoGain
 
@@ -244,8 +245,7 @@ class decisionTree:
         return feature
 
 
-
-    def decisionTree_Learning(self, examples, features, labels, default):
+    def decisionTree_Learning(self, examples, labels, default, currentNode, level):
         """
         This function will construct the decision tree
         :param examples: Matrix of training examples
@@ -255,49 +255,86 @@ class decisionTree:
         :return: decision tree
         """
 
-        tree = Tree.Tree() #decision tree
+        print "In decision tree learning; Initial level:", level
 
+        global headNode
         setLabs = set(labels) #Label set
+
+        tree = Tree.TreeTraversals(currentNode)
 
         #If there are no more examples, the default value of the root is returned as classification
         if not examples:
-            tree.createTree(default)
-            print "Tree Root Val:",tree.root.value
+            currNode = Tree.Node(default)
+            print "Tree Root Val:",currNode.value
 
         #If the labels are all '1' or all '0' , the classification is returned
         elif len(setLabs) == 1:
             if '1' in setLabs:
-                tree.createTree('Yes')
-                print "Tree Root Val:",tree.root.value
+                currNode = Tree.Node('Yes')
+                print "Tree Root Val:",currNode.value
             if '0' in setLabs:
-                tree.createTree('No')
-                print "Tree Root Val:",tree.root.value
+                currNode = Tree.Node('No')
+                print "Tree Root Val:",currNode.value
 
         #If there are no more features left, then majority value of the labels is returned as classification
-        elif bool(features) == False:
-            tree.createTree(self.getMajorityValue(labels))
-            print "Tree Root Val:",tree.root.value
+        elif bool(self.levelFeatDict) == False and currentNode != None:
+            currNode = Tree.Node(self.getMajorityValue(labels))
+            print "Tree Root Val:", currNode.value
+
         else:
-            # print "Examples in decision tree learning:", examples
-            # print "Features in decision tree learning:",features
-            # print "Labels in decision tree learning:",labels
 
             #The feature with maximum info gain
-            root = self.getBestAttribute(examples, labels, features)
-            print "Root:", root
-            tree.createTree(root)
+            if currentNode == None:
+                root = self.getBestAttribute(examples, labels, self.trainFeatures)
+                newFeatures = copy.deepcopy(self.trainFeatures)
+                newFeatures.pop(root)
+            else:
+                if level in self.levelFeatDict.keys():
+                    newFeatures = self.levelFeatDict[level]
+                    root = self.getBestAttribute(examples,labels,newFeatures)
+                    newFeatures.pop(root)
+                else:
+                    # newFeatures = copy.deepcopy(self.levelFeatDict[level])
+                    newFeatures = copy.deepcopy(self.trainFeatures)
+                    parentList = tree.getParentList()
+                    for parent in parentList:
+                        newFeatures.pop(parent)
+                    # if currentNode != None:
+                    newFeatures.pop(currentNode.getValue())
+                    if bool(newFeatures) == False:
+                        currNode = Tree.Node(self.getMajorityValue(labels))
+                        return currNode
+                    root = self.getBestAttribute(examples, labels, newFeatures)
+
+
+            self.levelFeatDict[level] = newFeatures
+            # print "Root:", root
+
+            # tree.createTree(root)
+            ## Create a root : node
+            ## Add children
+
+            currNode = Tree.Node(root)
+            if currentNode == None and headNode == None:
+                headNode = currNode
+            else:
+                currentNode.addChildren(currNode)
+            print "Current Node:", currNode.getValue()
+
+            ## To add children to tree - currNode.addChildren
 
             #Current majority value
             majorityVal = self.getMajorityValue(labels)
 
-            del features[root]
-            print "Feature length after removing root:", len(features.keys())
+            # print "Feature length after removing root:", len(newFeatures.keys())
 
-            #Values of the feature
+            #Values of the feature-
             lenDiv = len(self.inp.featureDiv[root])
-            print "Div:", self.inp.featureDiv[root]
-
+            # print "Div:", self.inp.featureDiv[root]
+            #
             #Looping through the values of root to find features corresponding to each value
+
+
             for i in range(lenDiv+1):
                 #Subset of examples and labels corresponding to the value of the feature
                 subSetExamples, subSetLabels = self.getExamplesSubset(examples, labels, i, root)
@@ -306,20 +343,32 @@ class decisionTree:
                 # print "Subset Labels:",subSetLabels
                 # print "Length2:",len(subSetLabels)
                 # child = self.getBestAttribute(subSetExamples, subSetLabels, features)
-
+                print "Level Before:", level
                 #The feature corresonding to value of the root
-                child = self.decisionTree_Learning(subSetExamples, features, subSetLabels, majorityVal)
-                tree.createTree(child.root.value)
-                print "Child and Root ",child.root.value, root
-                print "Features before deleting:",features
+                child = self.decisionTree_Learning(subSetExamples, subSetLabels, majorityVal, currNode, level+1)
+                # try:
+                print "Level After:", level
+                print "Child value ; Parent Value:", child.value, currNode.value
+                if child.value in self.levelFeatDict[level]:
+                    self.levelFeatDict[level].pop(child.value)
+                    #tree.createTree(child.root.value)
+                currNode.addChildren(child)
+                # except KeyError:
+                #     pass
+                # print "Features before deleting:",features
 
                 # if child.root.value != 'Yes' and child.root.value != 'No' and bool(features) == True:
                 #     del features[child.root.value] #Removing the selected feature from the feature list
                 # print "Features after deleting:",features
 
-            #   #add node to the root
+            #add node to the root
+            # try:
+            self.levelFeatDict.pop(level)
+            # except KeyError:
+            #     pass
+            level -= 1
 
-        return tree
+        return currNode
 
     def getMajorityValue(self, labels):
         """
@@ -380,9 +429,11 @@ class decisionTree:
 
 if __name__ == '__main__':
     sys.stdout = open("output.txt",'w')
-    obj = decisionTree('clickstream/clickstream-data/trainfeat.csv','clickstream/clickstream-data/trainlabs.csv','clickstream/clickstream-data/featnames.csv')
+    obj = decisionTree('clickstream/clickstream-data/trainfeat_temp.csv','clickstream/clickstream-data/trainlabs_temp.csv','clickstream/clickstream-data/featnames_temp.csv')
     obj.getTrainDetails()
-    #obj.decisionTree_Learning(obj.trainExamples, obj.trainFeatures, obj.trainLabels, 'Yes')
+    obj.decisionTree_Learning(obj.trainExamples, obj.trainLabels, 'Yes', None, 0)
+    treeObj = Tree.TreeTraversals(headNode)
+    treeObj.dfs()
 
 
 

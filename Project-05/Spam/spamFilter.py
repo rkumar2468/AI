@@ -41,12 +41,10 @@ class spamFilter:
 
 if __name__=='__main__':
 
-    # sys.stdout = open("output.txt",'w')
     spamObj = spamFilter('spam/data/train')
     spamObj.getTrainDetails()
-    # for key in spamObj.inp.spamDict.keys():
-    #     print key, spamObj.inp.spamDict[key]
     nb = baynet.NBayes('spam/data/test')
+
     print "Enter choice:\n1. All features\n2. Intersection features:\n"
     choice = input()
 
@@ -59,9 +57,5 @@ if __name__=='__main__':
     for key in result.keys():
         if result[key] != nb.classes[key]:
             falseCnt += 1
-        # print key, result[key], nb.classes[key]
     print "False Prediction Occurrences: %s " %(falseCnt)
     print "Accuracy of Prediction: ", (1 - float(falseCnt)/float(nb.length))*float(100), "%"
-    # nb.printFeatures()
-    # nb.probabilityComputation(spamObj.spamProb, spamObj.hamProb, nb.features[0], spamObj.inp.spamDict, spamObj.inp.hamDict, spamObj.inp.spamCnt, spamObj.inp.spamCnt)
-
