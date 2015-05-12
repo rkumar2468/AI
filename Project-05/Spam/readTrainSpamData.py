@@ -15,13 +15,15 @@ class readInputFile:
         self.hamWordsSet = set()
         self.commonWords = {}
         self.wordSets = list()
-        self.uniqueSpamWords = {}
-        self.uniqueHamWords = {}
         self.spamDict = {}
         self.hamDict = {}
         self.fileContents = {}
 
     def generateListsFromInputFile(self):
+        """
+        This function will read the input from the file and store them in data structures
+        :return: None
+        """
         if not os.path.exists(self.file):
             print "Error: The file "+self.file+" does not exists.\n"
             sys.exit(-1)
@@ -35,8 +37,12 @@ class readInputFile:
         self.generateLists()
 
     def generateLists(self):
+        """
+        This function will create data structures which will store the Words on Spam/Ham mails
+        :return: None
+        """
 
-        for key in self.fileContents.keys():
+        for key in self.fileContents.keys(): #Entire file is stored in file contents dictionary
 
             line = self.fileContents[key]
             line = line.strip(' ')
@@ -46,33 +52,18 @@ class readInputFile:
             lineList = line.split(' ')
             length = len(lineList)
 
-            # wordsSet = set()
 
-            if lineList[1] == 'spam':
-                #print 'Spam:',key,  self.fileContents[key]
-                self.spamCnt += 1
+            if lineList[1] == 'spam':   #Each word in the spam mail is taken and the count of it is stored against the word in a dictioanry
+                self.spamCnt += 1 #count of spam mails
                 for idx in range(2,length-1, 2):
                     val = lineList[idx]
-                    # wordsSet.add(val)
                     if val in self.spamDict.keys():
-                        #print "Spam:", val,lineList[idx+1]
                         self.spamDict[val] += 1
                     else:
-                        #print "Spam:", val,lineList[idx+1]
                         self.spamDict[val] = 1
 
-
-            # sys.exit(-1)
-            # for i in range(2, length-1, 2):
-            #     self.spamWordsSet.add((lineList[i]))
-            #
-            #     if lineList[i] in self.spamDict.keys():
-            #         self.spamDict[lineList[i]].append(lineList[i+1])
-            #     else:
-            #         self.spamDict[lineList[i]] = [lineList[i+1]]
-            else:
-                # print 'Ham:',key, self.fileContents[key]
-                self.hamCnt += 1
+            else: #Each word in ham mail is taken and count of it stored against the word in a dictionary
+                self.hamCnt += 1 #count of ham mails
                 for idx in range(2,length-1,2):
                     val = lineList[idx]
                     # wordsSet.add(val)
@@ -80,46 +71,13 @@ class readInputFile:
                     #print "Spam:", val,lineList[idx+1]
                         self.hamDict[val] += 1
                     else:
-                    #print "Spam:", val,lineList[idx+1]
+
                         self.hamDict[val] = 1
 
-            # self.wordSets.append(wordsSet)
-
-                # for i in range(2, length-1, 2):
-                #     self.hamWordsSet.add(lineList[i])
-                #
-                # if lineList[i] in self.hamDict.keys():
-                #         self.hamDict[lineList[i]].append(lineList[i+1])
-                # else:
-                #         self.hamDict[lineList[i]] = [lineList[i+1]]
-
-            # self.commonWords = self.spamWordsSet.intersection(self.hamWordsSet)
-            #
-            # self.uniqueSpamWords['spam']= self.spamWordsSet.difference(self.commonWords)
-            # self.uniqueHamWords['ham']=self.hamWordsSet.difference(self.commonWords)
-            #
-            # self.mailList[self.mailCnt] = [(lineList[c],lineList[c+1]) for c in range(0,length-1,2)]
-            # self.mailWordFreq[self.mailCnt] = sum([int(lineList[i]) for i in range(3, length, 2)])
-        # print "Spam Dict:"
-        # print self.spamDict
-        # print "Ham Dict:"
-        # print self.hamDict
-        # print self.wordSets
-        # print self.wordSets
-        # self.commonWords = set(self.wordSets[0]).intersection(*self.wordSets)
-        # print self.commonWords
-        # print "wordSets:\n"
-        # for i in range(len(self.wordSets)):
-        #     print self.wordSets
-        #     print '\n'
-
+        #The words which are there commonly in ham and spam mails
         for key in self.spamDict.keys():
             if key in self.hamDict.keys():
                 self.commonWords[key] = self.spamDict[key] + self.hamDict[key]
 
 
-        # print "Statistics:\n"
-        # for key in self.commonWords.keys():
-        #     if self.commonWords[key] > 500 and self.commonWords[key] < 700:
-        #         print key, self.commonWords[key]
 

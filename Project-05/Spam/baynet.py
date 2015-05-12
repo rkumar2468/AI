@@ -46,13 +46,16 @@ class NBayes:
         for key in self.fileDict.keys():
             length = len(self.fileDict[key])
             self.features[key] = [self.fileDict[key][i] for i in range(2, length-1, 2)]
-            # print "Length of features:",len(self.features.keys())
 
         if choice == 2:
             for key in obj.inp.commonWords.keys():
-                     # if obj.inp.commonWords[key] > 500: #Only those common words which are in more than 500 mails are considered
+                     if obj.inp.commonWords[key] > 500: #Only those common words which are in more than 500 mails are considered
+                        self.commonFeatures.append(key)
+        elif choice == 3:
+            for key in obj.inp.commonWords.keys():
                      if obj.inp.commonWords[key] >= 500 and obj.inp.commonWords[key] <= 700:
                         self.commonFeatures.append(key)
+
 
     def printFeatures(self):
         """
@@ -84,13 +87,12 @@ class NBayes:
             if feature in spamDict.keys(): # estimating the probability of the feature being present in spam mail
                 pfeaturesSpam.append(float(spamDict[feature])/float(spamCnt))
             else:
-                #Need to do smoothing here #
+                #Laplace smoothing
                 pfeaturesSpam.append(float(1)/float(mailCnt))
 
             if feature in hamDict.keys(): # estimating the probability of the feature being present in spam mail
                 pfeaturesHam.append(float(hamDict[feature])/float(hamCnt))
             else:
-                #Need to do smoothing here #
                 pfeaturesHam.append(float(1)/float(mailCnt))
 
         s = reduce(lambda x, y: float(x*y), pfeaturesSpam) # Product of all posterior probabilities
@@ -102,9 +104,6 @@ class NBayes:
             return 'spam'
         else:
             return 'ham'
-        
-        # print "Spam Prob : ", float(s*pSpam)
-        # print "Ham Prob : ", float(h*pHam)
 
     def run(self, obj, choice):
         """
@@ -117,7 +116,6 @@ class NBayes:
         result = {}
         self.readTestConfiguration()
         self.generateFeatures(obj, choice)
-        # self.printFeatures()
 
         if choice == 1: #The entire mail words are considered as features
              for key in self.features.keys():
@@ -132,9 +130,8 @@ class NBayes:
                 for word in l:
                     if word in self.commonFeatures:
                         wordsList.append(word)
-                #print wordsList
 
                 if len(wordsList) != 0:
                     result[mail] = self.probabilityComputation(obj,wordsList)
 
-        return result
+        return result #List of predictions
