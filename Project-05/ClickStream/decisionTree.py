@@ -5,6 +5,8 @@ import math
 import readTrainClickSData
 import copy
 import Tree
+import classifyInput
+import timeit
 
 headNode = None
 class decisionTree:
@@ -31,7 +33,6 @@ class decisionTree:
         self.inp = readTrainClickSData.readInputData(self.trainFeatFile, self.trainLabFile, self.featuresFile)
         self.inp.generateFileDS()
         self.inp.generateInputDS()
-        self.inp.calDistribution()
         self.trainExamples = copy.deepcopy(self.inp.featureMatrix)
         self.trainFeatures = copy.deepcopy(self.inp.featureList)
         self.trainLabels = copy.deepcopy(self.inp.trainLabels)
@@ -43,15 +44,11 @@ class decisionTree:
         :param labels: Training labels
         :return: Entropy of the root node
         """
-        # if valIdx == -1:
-        #     self.computeGoalEntropy()
-        #     return self.visitsEntropy
 
         trueCnt = 0 #Count of examples for which the goal is true
         falseCnt = 0 #Count of examples for which the goal is false
         exCnt = len(examples)
 
-        # print "Lables in Compute Entropy:", labels
         for i in range(exCnt):
                 if labels[i] == '1':
                     trueCnt += 1
@@ -61,7 +58,6 @@ class decisionTree:
 
         probTrue = float(trueCnt)/float(exCnt) #Probability of the examples having the goal as true
         probFalse = float(falseCnt)/float(exCnt) #Probability of the examples having goal as false
-        # print "Example Cnt:",float(exCnt),float(probTrue),float(probFalse)
 
         if probTrue != 0:
             entTrue= probTrue * math.log(probTrue, 2)
@@ -74,7 +70,6 @@ class decisionTree:
             entFalse = 0
 
         entropy = -(entTrue + entFalse) #Entropy
-        # print "Entropy:",entropy
 
         return entropy
 
@@ -90,65 +85,46 @@ class decisionTree:
                 pList (list of counts of examples corresponding to each value of feature which have goal as True);
                 nList (list of counts of examples corresponding to each value of feature which have goal as False)
         """
-        # if valIdx != -1:
-        #     domFeat1List = self.inp.featureDiv[feature1]
 
-        domFeat2List = self.inp.featureDiv[feature] #The different values for feature
-        # print "Dom Div:",domFeat2List
+        val = self.inp.featureDiv[feature] #The different values for feature
 
         # The count of examples corresponding to each feature value
         domVal1Cnt = 0
         domVal2Cnt = 0
-        domVal3Cnt = 0
-        domVal4Cnt = 0
+
 
         # The count of examples corresponding to each feature value for which the goal is True
         pCnt1 = 0
         pCnt2 = 0
-        pCnt3 = 0
-        pCnt4 = 0
+
 
         # The count of examples corresponding to each feature value for which the goal is False
         nCnt1 = 0
         nCnt2 = 0
-        nCnt3 = 0
-        nCnt4 = 0
+
 
         domValCnt = len(examples) #Total number of examples
 
         for i in range(domValCnt):
-            if float(examples[i][feature]) <= float(domFeat2List[0]): #feature value 1
+            if float(examples[i][feature]) <= float(val): #feature value 1
                 domVal1Cnt += 1
                 if labels[i] == '1':
                     pCnt1 += 1
                 elif labels[i] == '0':
                     nCnt1 += 1
 
-            if float(examples[i][feature]) > float(domFeat2List[0]) and float(examples[i][feature]) <= float(domFeat2List[1]): #feature value 2
+            if float(examples[i][feature]) > float(val):
                 domVal2Cnt += 1
                 if labels[i] == '1':
                     pCnt2 += 1
                 elif labels[i] == '0':
                     nCnt2 += 1
 
-            if float(examples[i][feature]) > float(domFeat2List[1]) and float(examples[i][feature]) <= float(domFeat2List[2]): #feature value 3
-                domVal3Cnt += 1
-                if labels[i] == '1':
-                    pCnt3 += 1
-                elif labels[i] == '0':
-                    nCnt3 += 1
 
-            if float(examples[i][feature]) > float(domFeat2List[2]): #feature value 4
-                domVal4Cnt += 1
-                if labels[i] == '1':
-                    pCnt4 += 1
-                elif labels[i] == '0':
-                    nCnt4 += 1
+        domValCntList = [domVal1Cnt, domVal2Cnt]
+        pList = [pCnt1, pCnt2]
+        nList = [nCnt1, nCnt2]
 
-
-        domValCntList = [domVal1Cnt, domVal2Cnt, domVal3Cnt, domVal4Cnt]
-        pList = [pCnt1, pCnt2, pCnt3, pCnt4]
-        nList = [nCnt1, nCnt2, nCnt3, nCnt4]
 
         return domValCnt, domValCntList, pList, nList
 
@@ -160,28 +136,21 @@ class decisionTree:
         :param feature: The given feature(child)
         :return: information gain
         """
-        # print "Feature:", feature
 
         rootFeatEntropy = self.computeRootEntropy(examples, labels) #Entropy of the root feature
 
-        # print "feat1Entropy:\n",feat1Entropy
 
         domValCnt, domValCntList, pList, nList = self.computeCounts(examples, labels, feature)
-        # print "domValCnt:\n",domValCnt
-        # print "domValCntList:\n",domValCntList
-        # print "pList:\n",pList
-        # print "nList:\n",nList
 
         entropyList = [] #List of entropies corresponding to each feature value
 
-        for i in range(4):
+        for i in range(2):
             if domValCntList[i] != 0:
                 probTrue = float(pList[i])/float(domValCntList[i])
                 probFalse = float(nList[i])/float(domValCntList[i])
             else:
                 probTrue = 0
                 probFalse = 0
-            # print "Prob true and false:",probTrue,probFalse
 
             if probTrue != 0:
                 entTrue= probTrue * math.log(probTrue, 2)
@@ -199,16 +168,11 @@ class decisionTree:
 
         childFeatEntropy = 0
 
-        for i in range(4):
+        for i in range(2):
             childFeatEntropy += (float(domValCntList[i])/float(domValCnt))*entropyList[i]
-
-        # print "RootEnt:",rootFeatEntropy
-        # print "ChildEnt:",childFeatEntropy
 
         #Information gain with respect to feature
         infoGain = rootFeatEntropy - childFeatEntropy
-
-        # print "Gain",infoGain
 
         return infoGain
 
@@ -222,14 +186,11 @@ class decisionTree:
         """
         length = len(examples)
 
-        # print "Length of examples in getBestAttribute:",length
-
         gainList = {} #Information gain with respect to all features
         for key in features.keys():
             infoGain = self.computeInfoGain(examples, labels, key)
             gainList[key] = infoGain
 
-        # print gainList
 
         #Maximum information gain
         maxInfoGain = max(gainList.values())
@@ -240,7 +201,7 @@ class decisionTree:
                 feature = key
                 break
 
-        # print feature, maxInfoGain
+
 
         return feature
 
@@ -265,24 +226,23 @@ class decisionTree:
         #If there are no more examples, the default value of the root is returned as classification
         if not examples:
             currNode = Tree.Node(default)
-            print "Tree Root Val:",currNode.value
+            print "No more examples; Tree Root Val:",currNode.value
 
         #If the labels are all '1' or all '0' , the classification is returned
         elif len(setLabs) == 1:
             if '1' in setLabs:
                 currNode = Tree.Node('Yes')
-                print "Tree Root Val:",currNode.value
+                print "Classify,Tree Root Val:",currNode.value
             if '0' in setLabs:
                 currNode = Tree.Node('No')
-                print "Tree Root Val:",currNode.value
+                print "Classify,Tree Root Val:",currNode.value
 
         #If there are no more features left, then majority value of the labels is returned as classification
         elif bool(self.levelFeatDict) == False and currentNode != None:
             currNode = Tree.Node(self.getMajorityValue(labels))
-            print "Tree Root Val:", currNode.value
+            print "No more features,Tree Root Val:", currNode.value
 
         else:
-
             #The feature with maximum info gain
             if currentNode == None:
                 root = self.getBestAttribute(examples, labels, self.trainFeatures)
@@ -294,79 +254,53 @@ class decisionTree:
                     root = self.getBestAttribute(examples,labels,newFeatures)
                     newFeatures.pop(root)
                 else:
-                    # newFeatures = copy.deepcopy(self.levelFeatDict[level])
                     newFeatures = copy.deepcopy(self.trainFeatures)
                     parentList = tree.getParentList()
+                    parentList.append(currentNode.getValue())
                     for parent in parentList:
                         newFeatures.pop(parent)
                     # if currentNode != None:
-                    newFeatures.pop(currentNode.getValue())
                     if bool(newFeatures) == False:
+                        print "No new features"
                         currNode = Tree.Node(self.getMajorityValue(labels))
                         return currNode
                     root = self.getBestAttribute(examples, labels, newFeatures)
 
 
             self.levelFeatDict[level] = newFeatures
-            # print "Root:", root
-
-            # tree.createTree(root)
-            ## Create a root : node
-            ## Add children
 
             currNode = Tree.Node(root)
+            currNode.addDist(self.inp.featureDiv[root])
             if currentNode == None and headNode == None:
                 headNode = currNode
             else:
                 currentNode.addChildren(currNode)
             print "Current Node:", currNode.getValue()
 
-            ## To add children to tree - currNode.addChildren
 
             #Current majority value
             majorityVal = self.getMajorityValue(labels)
 
-            # print "Feature length after removing root:", len(newFeatures.keys())
 
-            #Values of the feature-
-            lenDiv = len(self.inp.featureDiv[root])
-            # print "Div:", self.inp.featureDiv[root]
-            #
             #Looping through the values of root to find features corresponding to each value
-
-
-            for i in range(lenDiv+1):
+            for i in range(2):
+                print "Val:", i
                 #Subset of examples and labels corresponding to the value of the feature
                 subSetExamples, subSetLabels = self.getExamplesSubset(examples, labels, i, root)
-                # print "Subset Examples:",subSetExamples
-                # print "Length1:",len(subSetExamples)
-                # print "Subset Labels:",subSetLabels
-                # print "Length2:",len(subSetLabels)
-                # child = self.getBestAttribute(subSetExamples, subSetLabels, features)
+
                 print "Level Before:", level
-                #The feature corresonding to value of the root
                 child = self.decisionTree_Learning(subSetExamples, subSetLabels, majorityVal, currNode, level+1)
-                # try:
                 print "Level After:", level
                 print "Child value ; Parent Value:", child.value, currNode.value
                 if child.value in self.levelFeatDict[level]:
                     self.levelFeatDict[level].pop(child.value)
+
                     #tree.createTree(child.root.value)
-                currNode.addChildren(child)
-                # except KeyError:
-                #     pass
-                # print "Features before deleting:",features
+                if child.value == 'Yes' or child.value == 'No':
+                    currNode.addChildren(child)
 
-                # if child.root.value != 'Yes' and child.root.value != 'No' and bool(features) == True:
-                #     del features[child.root.value] #Removing the selected feature from the feature list
-                # print "Features after deleting:",features
-
-            #add node to the root
-            # try:
             self.levelFeatDict.pop(level)
-            # except KeyError:
-            #     pass
-            level -= 1
+
 
         return currNode
 
@@ -401,26 +335,16 @@ class decisionTree:
         """
         subsetExamples = []
         subsetLabels = []
-        domDivList = self.inp.featureDiv[root]
+        val = self.inp.featureDiv[root]
         exNum = len(examples)
         if i == 0:
             for j in range(exNum):
-                if float(examples[j][root]) <= float(domDivList[0]):
+                if float(examples[j][root]) <= float(val):
                     subsetExamples.append(examples[j])
                     subsetLabels.append(labels[j])
         elif i == 1:
             for j in range(exNum):
-                if float(examples[j][root]) > float(domDivList[0]) and float(examples[j][root]) <= float(domDivList[1]):
-                    subsetExamples.append(examples[j])
-                    subsetLabels.append(labels[j])
-        elif i == 2:
-            for j in range(exNum):
-                if float(examples[j][root]) > float(domDivList[1]) and float(examples[j][root]) <= float(domDivList[2]):
-                    subsetExamples.append(examples[j])
-                    subsetLabels.append(labels[j])
-        elif i == 3:
-            for j in range(exNum):
-                if float(examples[j][root]) > float(domDivList[2]):
+                if float(examples[j][root]) > float(val):
                     subsetExamples.append(examples[j])
                     subsetLabels.append(labels[j])
 
@@ -429,11 +353,26 @@ class decisionTree:
 
 if __name__ == '__main__':
     sys.stdout = open("output.txt",'w')
-    obj = decisionTree('clickstream/clickstream-data/trainfeat_temp.csv','clickstream/clickstream-data/trainlabs_temp.csv','clickstream/clickstream-data/featnames_temp.csv')
+
+    startTime=timeit.default_timer() # The time when the program starts execution
+
+    obj = decisionTree('clickstream/clickstream-data/trainfeat.csv','clickstream/clickstream-data/trainlabs.csv','clickstream/clickstream-data/featnames.csv')
     obj.getTrainDetails()
     obj.decisionTree_Learning(obj.trainExamples, obj.trainLabels, 'Yes', None, 0)
-    treeObj = Tree.TreeTraversals(headNode)
-    treeObj.dfs()
+    classifyObj = classifyInput.decisionTreeInduction('clickstream/clickstream-data/testfeat.csv','clickstream/clickstream-data/testlabs.csv')
+    classifyObj.generateFileDS()
+    labels = classifyObj.classifyTestData(headNode)
+    trueCount, accuracy = classifyObj.computeAccuracy()
+
+    endTime=timeit.default_timer() # The time when the backtracking search ends its execution
+    runTime=endTime-startTime #Total time taken for the algorithm to execute
+
+    print trueCount
+    print "Accuracy:", accuracy
+    print "Total Time taken:", runTime
+
+
+
 
 
 

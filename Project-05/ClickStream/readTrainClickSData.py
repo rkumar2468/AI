@@ -4,7 +4,7 @@ import os,sys
 
 class readInputData:
     """
-    This call will data from the input files and creates data structures
+    This class will data from the input files and creates data structures
     """
     def __init__(self,trainfeat, trainlabs, featnames):
         self.fileTrainFeat = trainfeat
@@ -53,7 +53,6 @@ class readInputData:
 
         self.exCnt = count
         self.featCnt = len(self.trainFeatDict[0])
-        # print self.featCnt
         count = 0
 
         for line in fileTrainLabs:
@@ -91,15 +90,15 @@ class readInputData:
             feature += 1
 
         self.preprocess()
-        # print self.featureList
+
 
         for feature in self.featureList.keys():
             domSet = self.featureList[feature]
 
-            retDivList = self.computeMediansList(domSet) #List of range of feature values
-            self.featureDiv[feature] = retDivList
+            retDiv = self.computeMediansList(domSet) #List of range of feature values
+            print retDiv
+            self.featureDiv[feature] = retDiv
 
-        # print self.featureDiv
 
     def computeMediansList(self, domains):
         """
@@ -112,53 +111,30 @@ class readInputData:
         domList.sort(key=int)
         length = len(domList)
 
-        # print domList
-        #print "Before sort:", domains
-        #print "After sort:", domList
 
         if length > 2:
             med1Idx = (0 + (length -1))/2
-            med2Idx = (0 + (med1Idx-1))/2
-            med3Idx = ((med1Idx+1) + (length-1))/2
         else:
-            return [domList[0], domList[1], 'inf']
+            return domList[0]
 
-        return [domList[med2Idx], domList[med1Idx], domList[med3Idx]]
+        return domList[med1Idx]
 
     def preprocess(self):
+        """
+        This function does the pre-processing of data
+        :return: None
+        """
 
         count = 0
         for key in self.featureList.keys():
 
             fList = list(self.featureList[key])
-
-            if(len(fList) == 1):
+            if(len(fList) <= 6): #All the features which have number of values less, i.e less than or equal to 6 are removed from the feature list
                 count += 1
                 del self.featureList[key]
-        # print "C:",count
-
-    def calDistribution(self):
 
 
-        # f = open("featValsDistribution.txt",'w')
 
-        for key in self.featureList.keys():
 
-            fList = list(self.featureList[key])
-
-            fList.sort(key=int)
-
-            length = len(fList)
-            distList = list()
-
-            for i in range(length-1):
-                diff = int(fList[i])-int(fList[i+1])
-                distList.append(diff)
-
-            self.featureDist[key] = distList
-            # print str(key)+":"
-            # print fList
-            # print distList
-            # print "\n"
 
 

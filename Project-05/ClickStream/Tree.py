@@ -1,10 +1,10 @@
 __author__ = 'sri'
 
-class Node:
+class Node: #This class represents the tree data structure
         def __init__(self, val):
             self.value = val
             self.children = []
-            self.distribution = []
+            self.distribution = 0
             self.parent = None
 
         def addDist(self, dist):
@@ -20,6 +20,9 @@ class Node:
         def getChildren(self):
             return self.children
 
+        def getDistribution(self):
+            return self.distribution
+
         def getParent(self):
             return self.parent
 
@@ -28,10 +31,10 @@ class Node:
 
 class TreeTraversals:
        def __init__(self, node):
-           self.curr = node
+           self.root = node
 
-       def getParentList(self):
-           temp = self.curr
+       def getParentList(self): #Function to get the parents of a given node
+           temp = self.root
            list = []
            while temp.getParent() != None:
              temp = temp.getParent()
@@ -40,8 +43,8 @@ class TreeTraversals:
            return list
 
        def dfs(self):
-           if self.curr:
-                self.dfsUtil(self.curr)
+           if self.root:
+                self.dfsUtil(self.root)
 
        def dfsUtil(self, node):
             print node.getValue(), ' -> ',
